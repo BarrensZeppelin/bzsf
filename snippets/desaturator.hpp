@@ -13,7 +13,11 @@ protected:
 public:
 
 	sf::Uint8 * GetPixels() {
-		float factor = float(clock.getElapsedTime().asMilliseconds()) / duration;
+		float factor;
+		if(duration != 0) {
+			factor = float(clock.getElapsedTime().asMilliseconds()) / duration;
+		} else factor = 20; // Just something above 1. This will make it evaluate the colours once for instant desaturation
+
 		if(factor > 1) {
 			factor = 1;
 			if(done) return pixels; else done=true;
