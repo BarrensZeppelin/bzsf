@@ -24,7 +24,7 @@ public:
 
 	virtual void draw() {
 		if(dType == animation) {
-			if(anim->GetTimer()->getElapsedTime().asMilliseconds() > anim->GetSpeed() && anim->GetSpeed()!=0) {
+			if((unsigned int)anim->GetTimer()->getElapsedTime().asMilliseconds() > anim->GetSpeed() && anim->GetSpeed()!=0) {
 				anim->GetTimer()->restart();
 				anim->UpIndex();
 
@@ -49,6 +49,8 @@ public:
 		float yPos = entity.getPosition().y;
 		
 		entity.setTexture(*tex);
+
+		anim = 0;
 
 		if(!customTile) {
 			texTile = new tsTile();
@@ -125,7 +127,7 @@ void sf::Animation::SetFrame(int index, drawable& entity, bool speedToZero = fal
 		frameIndex = index;
 		
 		entity.GetEntity().setTextureRect(sf::IntRect(frameWidth*frameIndex, 0, frameWidth, GetHeight()));
-	} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames << " to an animation." << std::endl; }
+	} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
 	
 	if(speedToZero) {speed = 0;}
 }

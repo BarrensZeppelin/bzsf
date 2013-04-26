@@ -1,3 +1,5 @@
+using namespace std;
+
 class game {
 public:
 	static map<unsigned int, void (*)()> gameFunctions;

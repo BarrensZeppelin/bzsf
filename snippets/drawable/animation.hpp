@@ -35,9 +35,9 @@ namespace sf {
 		/// \brief Sets the frame index of the Animation
 		///
 		/// If you would want to manually set the frame of the animation,
-		/// you can do that with this function.
+		/// 	you can do that with this function.
 		/// Simply call it with the index of the frame and the
-		/// drawable affected.
+		/// 	drawable affected.
 		/// drawable.GetAnimation()->SetFrame('index', drawable)
 		///
 		/// \param index The index you want to change to
@@ -48,7 +48,7 @@ namespace sf {
 		
 		
 		void UpIndex()	{
-			if(frameIndex < numFrames) {
+			if(frameIndex < numFrames-1) {
 				frameIndex++;
 			} else if(repeat) {
 				frameIndex = 0;
@@ -69,6 +69,7 @@ namespace sf {
 		/// \param Repeat Default: true. Repeat animation after it has ended?
 		///
 		/// \see drawable::SetAnimation
+		///
 		//////////////////////////////////////////////////
 		Animation(int fWidth, sf::Texture& t, int Speed, bool Repeat = true) : repeat(Repeat), texture(&t), speed(Speed), frameWidth(fWidth), frameIndex(0) {
 			if(t.getSize().x%fWidth!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
