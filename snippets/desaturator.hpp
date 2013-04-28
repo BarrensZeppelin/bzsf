@@ -26,8 +26,8 @@ public:
 		delete pixels;
 		pixels = new sf::Uint8[area.x*area.y*4];
 
-		for(int x = 0; x < area.x; x++) {
-			for(int y = 0; y < area.y; y++) {
+		for(sf::Uint16 x = 0; x < area.x; x++) {
+			for(sf::Uint16 y = 0; y < area.y; y++) {
 				sf::Uint32 pos = y * area.x;
 
 				//Calculate in-between colours (during transform)
@@ -45,20 +45,21 @@ public:
 		return pixels;
 	}
 
-	Desaturator(sf::Image * img, sf::Uint16 _duration) : duration(_duration), done(false) {	
-		area = img->getSize();
+	Desaturator(const sf::Image& img, sf::Uint16 _duration) : duration(_duration), done(false), pixels(0) {	
+		area = img.getSize();
 
 		targetPixels = new sf::Uint8[area.x*area.y];
 		startPixels = new sf::Uint8[area.x*area.y*4];
 		
 		//Create array of target pixels
-		for(int x = 0; x < img->getSize().x; x++) {
-			for(int y = 0; y < img->getSize().y; y++) {
-				sf::Color c = img->getPixel(x, y); // Grab the current color
-				//sf::Uint8 tC = (max(c.r, max(c.g, c.b)) + min(c.r, min(c.g, c.b)))/2; // Calculate gray color
-				//0.21 R + 0.71 G + 0.07 B.
-				sf::Uint8 tC = 0.21f * c.r + 0.72f * c.g + 0.07f * c.b;
-				//sf::Uint8 tC = (c.r + c.g + c.b)/3;
+		for(sf::Uint16 x = 0; x < img.getSize().x; x++) {
+			for(sf::Uint16 y = 0; y < img.getSize().y; y++) {
+				sf::Color c = img.getPixel(x, y); // Grab the current color
+
+				// Calculate gray color
+				//sf::Uint8 tC = (max(c.r, max(c.g, c.b)) + min(c.r, min(c.g, c.b)))/2; // Lightness
+				sf::Uint8 tC = sf::Uint8(0.21f * c.r + 0.72f * c.g + 0.07f * c.b); //Luminocity
+				//sf::Uint8 tC = (c.r + c.g + c.b)/3; // Average
 
 				sf::Uint32 pos = y * area.x;
 				startPixels[4*(x + pos)]   = c.r; // R
