@@ -1,6 +1,5 @@
-class drawable;
-
-namespace sf {
+namespace bzsf {
+	class Drawable;
 
 	class Animation {
 	protected:
@@ -44,7 +43,7 @@ namespace sf {
 		/// \param entity The drawable you want the change to affect
 		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
 		///////////////////////////////////////////////////
-		void SetFrame(int index, drawable& entity, bool speedToZero);
+		void SetFrame(int index, Drawable& entity, bool speedToZero);
 		
 		
 		void UpIndex()	{
