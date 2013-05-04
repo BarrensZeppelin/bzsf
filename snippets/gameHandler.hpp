@@ -11,7 +11,7 @@ public:
 	}
 
 	static int runGame() {
-		window->setMouseCursorVisible(0);
+		window->setMouseCursorVisible(1);
 		window->setVerticalSyncEnabled(0);
 		while(run && window->isOpen()) {
 			if(gameFunctions.find(currentState) != gameFunctions.end()) {
@@ -29,3 +29,7 @@ public:
 unsigned int game::currentState = 0;
 bool game::run = true;
 std::map<unsigned int, void (*)()> game::gameFunctions = std::map<unsigned int, void (*)()>();
+
+void game_die() {
+	game::run = false;
+}

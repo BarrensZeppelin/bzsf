@@ -1,6 +1,5 @@
 #include <BZeps-SFML-Snippets\snippets\drawable\animation.hpp>
 #include <BZeps-SFML-Snippets\snippets\drawable\tileset.hpp>
-#include <BZeps-SFML-Snippets\snippets\drawable\particleSystem.hpp>
 
 namespace bzsf {
 
@@ -133,3 +132,6 @@ void bzsf::Animation::SetFrame(int index, Drawable& entity, bool speedToZero = f
 	
 	if(speedToZero) {speed = 0;}
 }
+
+
+#include <BZeps-SFML-Snippets\snippets\drawable\particleSystem.hpp>
