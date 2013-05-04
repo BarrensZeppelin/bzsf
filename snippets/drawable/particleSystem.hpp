@@ -1,10 +1,9 @@
 namespace bzsf {
-	const float PI = 3.14159265359f;
 
 	class ParticleSystem;
 
 
-	class Particle : public bzsf::Drawable {
+	class Particle : public Drawable {
 		// No randomization is done within this class except choosing a tile
 
 		sf::Vector2f force; // x -> angle & y -> velocity
@@ -24,8 +23,8 @@ namespace bzsf {
 		}
 
 		void fixAngle() {
-			while(force.x < 0)		{force.x += 2*PI;}
-			while(force.x > 2*PI)	{force.x -= 2*PI;}
+			while(force.x < 0) {force.x += 2*PI;}
+			while(force.x >= 2*PI) {force.x -= 2*PI;}
 		}
 
 	public:
@@ -39,6 +38,7 @@ namespace bzsf {
 			SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
 			entity.setPosition(pos);
 			entity.setScale(scale, scale);
+			entity.setRotation(RADTODEG(_a));
 			entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
 			entity.setColor(color);
 		}
@@ -47,6 +47,7 @@ namespace bzsf {
 			SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
 			entity.setPosition(pos);
 			entity.setScale(scale, scale);
+			entity.setRotation(RADTODEG(_a));
 			entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
 			entity.setColor(color);
 		}
@@ -68,7 +69,7 @@ namespace bzsf {
 				fixAngle();
 				float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*mDelta);
 				float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*mDelta);
-				force.x = ((force.x > PI/2 && force.x < (3*PI)/2) ? PI : 0) + atan(b / a);
+				force.x = ((force.x <= PI/2 || force.x > (3*PI)/2) ? 0 : PI) + atan(b / a);
 				force.y = sqrt(pow(a, 2) + pow(b, 2));
 			}
 		}
@@ -102,12 +103,13 @@ namespace bzsf {
 
 		
 		///////////////////////////////////
+		/// \brief Fuel the particle system with particles using a friction method of movement
 		///
 		/// angles are in radians
 		///	velocity is pixels per second
 		/// friction is also pixels per second
 		/// 
-		/// velocity = velocity - (velocity * velocitySpread)/2 + rand()%(velocity * velocitySpread)
+		/// velocity = velocity - (velocity * velocitySpread) + rand()%(velocity * velocitySpread)*2
 		///
 		////////////////////////////////////////
 		void fuelFric(float angle, float velocity, int amount, float friction, sf::Vector2f origin, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1) {
@@ -122,13 +124,14 @@ namespace bzsf {
 		}
 
 		///////////////////////////////////
+		/// \brief Fuel the particle system with particles affected by a gravity
 		///
 		/// angles are in radians
 		///	velocity is pixels per second
 		/// friction is also pixels per second
 		/// life is lifetime in seconds
 		/// 
-		/// velocity = velocity - (velocity * velocitySpread)/2 + rand()%(velocity * velocitySpread)
+		/// velocity = velocity - (velocity * velocitySpread) + rand()%(velocity * velocitySpread)*2
 		///
 		////////////////////////////////////////
 		void fuelGrav(float angle, float velocity, float gravity_angle, float gravity_velocity, int amount, sf::Vector2f origin, sf::Color color = sf::Color(255, 255, 255, 255), float life = 2.f, float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1) {
@@ -149,6 +152,7 @@ namespace bzsf {
 			float mDelta = clock.restart().asSeconds();
 			for(unsigned int i = 0; i < particles.size(); i++){
 				particles[i].update(mDelta);
+
 				if(particles[i].isDead()) {
 					particles.erase(particles.begin() + i);
 					i--;
@@ -163,4 +167,4 @@ namespace bzsf {
 		}
 	};
 
-} //ENDOF NAMESPACE bzsg
+} //ENDOF NAMESPACE bzsf

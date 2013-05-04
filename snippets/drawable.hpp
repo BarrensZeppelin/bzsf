@@ -12,23 +12,20 @@ namespace bzsf {
 		sf::Sprite entity;
 		
 		bzsf::tsTile * texTile;
-		bzsf::Animation * anim;
+		bzsf::Animation anim;
 		bool customTile;
 
 	public:
 		bzsf::tsTile * GetTile()		{return texTile;}
 		sf::Sprite& GetEntity()			{return entity;	}
-		bzsf::Animation * GetAnimation(){return anim;	}
+		bzsf::Animation& GetAnimation() {return anim;	}
 		drawType GetDrawType()			{return dType;	}
 
 
 		virtual void draw() {
 			if(dType == animation) {
-				if((unsigned int)anim->GetTimer()->getElapsedTime().asMilliseconds() > anim->GetSpeed() && anim->GetSpeed()!=0) {
-					anim->GetTimer()->restart();
-					anim->UpIndex();
-
-					entity.setTextureRect(sf::IntRect(anim->GetWidth()*anim->GetIndex(), 0, anim->GetWidth(), anim->GetHeight()));
+				if(anim.Update()) {
+					entity.setTextureRect(sf::IntRect(anim.GetWidth()*anim.GetIndex(), 0, anim.GetWidth(), anim.GetHeight()));
 				}
 			}
 
@@ -36,36 +33,23 @@ namespace bzsf {
 		}
 		
 
-		void SetAnimation(bzsf::Animation * a) {
+		void SetAnimation(bzsf::Animation& a) {
 			anim = a;
-			entity.setTexture(*a->GetTexture());
-			entity.setTextureRect(sf::IntRect(0, 0, a->GetWidth(), a->GetHeight()));
+			entity.setTexture(a.GetTexture());
+			entity.setTextureRect(sf::IntRect(a.GetWidth()*a.GetIndex(), 0, a.GetWidth(), a.GetHeight()));
 
 			dType = animation;
 		}
 
-		void SetCustomTexture(sf::Texture * tex) {
+		void SetTexture(sf::Texture * tex) {
 			float xPos = entity.getPosition().x;
 			float yPos = entity.getPosition().y;
 			
-			entity.setTexture(*tex);
-
-			anim = 0;
-
-			if(!customTile) {
-				texTile = new bzsf::tsTile();
-				customTile = 1;
-			}
-			texTile->height = tex->getSize().y;
-			texTile->width = tex->getSize().x;
-			texTile->xOffset = 0;
-			texTile->yOffset = 0;
-
-			texTile->texture = tex;
+			entity.setTexture(*tex, true);
 
 			entity.setPosition(xPos, yPos);
 
-			dType = tile;
+			dType = texture;
 		}
 
 		void SetTile(bzsf::tsTile * tl) {
@@ -83,33 +67,44 @@ namespace bzsf {
 		}
 
 		void NewCRegion(int width, int height) {
-			if(!customTile) {
-				int txOff = texTile->xOffset;
-				int tyOff = texTile->yOffset;
-				int tWidth = texTile->width;
-				int tHeight = texTile->height;
-				sf::Texture * tTex = texTile->texture;
+			if(dType == tile) {
+				if(!customTile) {
+					int txOff = texTile->xOffset;
+					int tyOff = texTile->yOffset;
+					int tWidth = texTile->width;
+					int tHeight = texTile->height;
+					sf::Texture * tTex = texTile->texture;
 
-				texTile = new bzsf::tsTile();
-				customTile = 1;
+					texTile = new bzsf::tsTile();
+					customTile = 1;
 
-				texTile->xOffset = txOff;
-				texTile->yOffset = tyOff;
-				texTile->texture = tTex;
-			}
-			texTile->width = width;
-			texTile->height = height;
+					texTile->xOffset = txOff;
+					texTile->yOffset = tyOff;
+					texTile->texture = tTex;
+				}
+				texTile->width = width;
+				texTile->height = height;
 
-			dType = tile;
+				dType = tile;
+			} else {std::cerr << "Tried to assign new Collision Region to an entity without a tile." << std::endl;}
 		}
 
 
-		Drawable() {
-			customTile = 0;
-			texTile = 0;
-			anim = 0;
+		Drawable() : customTile(false), texTile(0) {
 
-			dType = texture;
+			dType = none;
+		}
+
+		explicit Drawable(bzsf::Animation& animation) : customTile(false), texTile(0) {
+			SetAnimation(animation);
+		}
+
+		explicit Drawable(sf::Texture& texture) : customTile(false), texTile(0) {
+			SetTexture(&texture);
+		}
+
+		explicit Drawable(tsTile * tile) : customTile(false), texTile(0) {
+			SetTile(tile);
 		}
 
 		virtual ~Drawable() {
@@ -121,17 +116,8 @@ namespace bzsf {
 		}
 	};
 
-} //ENDOF NAMESPACE BZSF
+} //ENDOF NAMESPACE bzsf
 
-void bzsf::Animation::SetFrame(int index, Drawable& entity, bool speedToZero = false) {
-	if(index < numFrames) {
-		frameIndex = index;
-		
-		entity.GetEntity().setTextureRect(sf::IntRect(frameWidth*frameIndex, 0, frameWidth, GetHeight()));
-	} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
-	
-	if(speedToZero) {speed = 0;}
-}
-
+//void bzsf::Animation::SetFrame(int index, Drawable& entity, bool speedToZero = false) 
 
 #include <BZeps-SFML-Snippets\snippets\drawable\particleSystem.hpp>
