@@ -4,8 +4,24 @@ Small bits and pieces I have coded over time to make my time with SFML easier.
 
 gameHandler
 -----------
-This piece of code helps you manage your game.    
-It allows you to effortlessly switch game states from running -> paused and other stuff.
+This piece of code helps you manage the flow of your game.    
+It allows you to effortlessly switch game states from intro -> playing and other stuff.    
+Basically it just lets you switch from one game loop to another without much hassle.
 
-drawable
+Drawable
 --------
+An extended sf::Sprite with tileset & animation support.
+
+ParticleSystem
+--------------
+A simple yet powerful particle system.    
+
+Features include:
+
+- Two modes of particle decay. Friction until speed hits zero, or a set lifetime.
+- Gravity in any desired direction.
+- Lots of control over visual representation.
+
+
+
+Example project that shows the various uses of my snippets: 
