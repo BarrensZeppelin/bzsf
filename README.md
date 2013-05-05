@@ -12,6 +12,11 @@ Drawable
 --------
 An extended sf::Sprite with tileset & animation support.
 
+Desaturator
+-----------
+Takes an sf::Image and desaturates it over a set duration.    
+Note: Not suitable for larger images, it will take a lot of CPU-power.
+
 ParticleSystem
 --------------
 A simple yet powerful particle system.    
