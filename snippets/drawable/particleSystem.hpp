@@ -31,6 +31,17 @@ namespace bzsf {
 		sf::Clock getClock() {return fadeClock;}
 		bool isDead() {return dead;}
 
+		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation& anim) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(sf::Color(255, 255, 255)){
+			life = _v / friction;
+
+			//animation = Animation(anim);
+
+			SetAnimation(anim);
+			entity.setPosition(pos);
+			entity.setScale(scale, scale);
+			entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
+			entity.setColor(color);
+		}
 
 		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(_color) {
 			life = _v / friction;
@@ -75,6 +86,7 @@ namespace bzsf {
 		}
 
 		friend class ParticleSystem;
+
 	};
 
 
@@ -101,7 +113,17 @@ namespace bzsf {
 			}
 		}
 
-		
+		void fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation& anim, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1) {
+			
+			if(angleSpread > 2*PI) angleSpread = 2*PI;
+
+			for(int i = 0; i < amount; i++) {
+				float as = float(rand()%(int)(angleSpread*1000))/1000;
+				float vs = float(rand()%(int)(velocity * velocitySpread));
+				particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, friction, origin, scale, anim));
+			}
+		}
+
 		///////////////////////////////////
 		/// \brief Fuel the particle system with particles using a friction method of movement
 		///

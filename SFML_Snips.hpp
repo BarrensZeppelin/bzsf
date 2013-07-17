@@ -18,6 +18,7 @@
 #include <map>
 #include <math.h>
 #include <time.h>
+#include <algorithm>
 
 namespace bzsf {
 	const float PI = 3.14159265359f;
@@ -27,6 +28,7 @@ namespace bzsf {
 
 // Include the Snippets:
 
+#include <BZeps-SFML-Snippets\snippets\general.hpp>
 #include <BZeps-SFML-Snippets\snippets\gameHandler.hpp>
 #include <BZeps-SFML-Snippets\snippets\drawable.hpp>
 #include <BZeps-SFML-Snippets\snippets\desaturator.hpp>

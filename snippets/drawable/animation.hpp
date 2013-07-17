@@ -58,7 +58,7 @@ namespace bzsf {
 			if(speed == 0) {timer.restart(); return true;}
 			else if((overflow + timer.getElapsedTime().asMilliseconds()) >= speed) {
 				
-				overflow = overflow + timer.restart().asMilliseconds() - speed;
+				overflow = (overflow + timer.restart().asMilliseconds() - speed)%speed;
 
 				if(frameIndex < numFrames-1) {
 					frameIndex++;
