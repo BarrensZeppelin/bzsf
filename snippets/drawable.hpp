@@ -17,87 +17,35 @@ namespace bzsf {
 		int animIndex;
 
 	public:
-		bzsf::tsTile * GetTile()		{return texTile;}
-		sf::Sprite& GetEntity()			{return entity;	}
-		bzsf::Animation *GetAnimation() {return anim;	}
-		sf::Texture& GetTexture()		{return tex;}
-		drawType GetDrawType()			{return dType;	}
+		tsTile * GetTile();
+		sf::Sprite& GetEntity();
+		Animation *GetAnimation();
+		sf::Texture& GetTexture();
+		drawType GetDrawType();
 
 
-		virtual void draw() {
-			if(dType == animation) {
-				anim->Update();
-				if(anim->GetIndex() != animIndex) {
-					animIndex = anim->GetIndex();
-					entity.setTextureRect(sf::IntRect(anim->GetWidth()*anim->GetIndex(), 0, anim->GetWidth(), anim->GetHeight()));
-				}
-			}
-
-			if(dType!=none) {game::window->draw(entity);}
-		}
+		virtual void draw();
 		
 
-		void SetAnimation(bzsf::Animation& a) {
-			anim = &a;
-			entity.setTexture(a.GetTexture());
-			entity.setTextureRect(sf::IntRect(a.GetWidth()*a.GetIndex(), 0, a.GetWidth(), a.GetHeight()));
+		void SetAnimation(bzsf::Animation& a);
 
-			dType = animation;
-		}
+		void SetTexture(sf::Texture& Tex);
 
-		void SetTexture(sf::Texture& Tex) {
-			tex = Tex;
-			
-			float xPos = entity.getPosition().x;
-			float yPos = entity.getPosition().y;
+		void SetTile(bzsf::tsTile * tl);
 
-			entity.setTexture(tex);
-			
-			entity.setPosition(xPos, yPos);
-			
-			dType = texture;
-		}
+		void Init();
 
-		void SetTile(bzsf::tsTile * tl) {
-			float xPos = entity.getPosition().x;
-			float yPos = entity.getPosition().y;
-			
-			entity.setTexture(*tl->texture);
-			entity.setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
+		Drawable();
 
-			entity.setPosition(xPos, yPos);
-
-			texTile = tl;
-
-			dType = tile;
-		}
-
-		Drawable() : texTile(0), animIndex(0) {
-			dType = none;
-		}
-
-		explicit Drawable(bzsf::Animation& animation) : texTile(0), animIndex(0) {
-			SetAnimation(animation);
-		}
-
+		explicit Drawable(bzsf::Animation& animation);
 		
-		explicit Drawable(std::string filename) : texTile(0), tex(), animIndex(0) {
-			tex.loadFromFile(filename);
-			entity.setTexture(tex);
-			dType = texture;
-		}
+		explicit Drawable(std::string filename);
 
-		explicit Drawable(sf::Texture texture) : texTile(0), animIndex(0) {
-			SetTexture(texture);
-		}
+		explicit Drawable(sf::Texture& texture);
 
-		explicit Drawable(tsTile * tile) : texTile(0), animIndex(0) {
-			SetTile(tile);
-		}
+		explicit Drawable(tsTile * tile);
 
-		virtual ~Drawable() {
-			texTile = 0;
-		}
+		virtual ~Drawable();
 	};
 
 } //ENDOF NAMESPACE bzsf 

@@ -1,6 +1,10 @@
 namespace bzsf {
-	
-	template <typename T>
+	extern const float PI;
+	float DEGTORAD(float deg);
+	float RADTODEG(float rad);
+
+
+	/*template <typename T>
 	class ValueLimiter {
 	private:
 		T * value;
@@ -16,8 +20,11 @@ namespace bzsf {
 		ValueLimiter(T& val, sf::Vector2<T> limit, Type limType) : type(limType) {
 			value = &val;
 
-			if(limit.y > limit.x) swap(limit.x, limit.y);
+			if(limit.y < limit.x) swap(limit.x, limit.y);
 			limits = limit;
+
+			if(value < limit.x) value = limit.x;
+			if(value > limit.y) value = limit.y;
 		}
 
 		void Add(const T val) {
@@ -62,7 +69,6 @@ namespace bzsf {
 		const T operator-(const T& val) const {
 			return *(*this -= val).value;
 		}
-	};
-
+	};*/
 
 } //ENDOF NAMESPACE bzsf

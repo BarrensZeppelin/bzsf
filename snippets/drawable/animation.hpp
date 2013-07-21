@@ -1,6 +1,4 @@
 namespace bzsf {
-	class Drawable;
-
 	class Animation {
 	protected:
 		int frameWidth;
@@ -8,8 +6,8 @@ namespace bzsf {
 		int frameIndex;
 		int numFrames;
 
-		unsigned int speed; //Speed in milliseconds between each change of frame
-		unsigned int overflow;
+		sf::Uint32 speed; //Speed in milliseconds between each change of frame
+		sf::Uint32 overflow;
 
 		bool repeat;
 
@@ -18,17 +16,17 @@ namespace bzsf {
 		sf::Texture texture;
 
 	public:
-		int GetWidth()				{return frameWidth;				}
-		int GetHeight()				{return texture.getSize().y;	}
-		int GetIndex()				{return frameIndex;				}
-		int GetFrames()				{return numFrames;				}
-		unsigned int GetSpeed()		{return speed;					}
-		sf::Clock& GetTimer()		{return timer;					}
-		bool IsRepeating()			{return repeat;					}
-		sf::Texture& GetTexture()	{return texture;				}
+		int GetWidth();
+		int GetHeight();
+		int GetIndex();
+		int GetFrames();
+		sf::Uint32 GetSpeed();
+		sf::Clock& GetTimer();
+		bool IsRepeating();
+		sf::Texture& GetTexture();
 		
 
-		void SetSpeed(unsigned int s) {speed = s;}
+		void SetSpeed(sf::Uint32 s);
 		
 		
 		///////////////////////////////////////////////////
@@ -44,33 +42,10 @@ namespace bzsf {
 		/// \param entity The drawable you want the change to affect
 		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
 		///////////////////////////////////////////////////
-		void SetFrame(int index, bool speedToZero = false) {
-			if(index < numFrames) {
-				frameIndex = index;
-			} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
-			
-			if(speedToZero) {speed = 0;}
-		}
+		void SetFrame(int index, bool speedToZero = false);
 
 		
-		
-		bool Update() {
-			if(speed == 0) {timer.restart(); return true;}
-			else if((overflow + timer.getElapsedTime().asMilliseconds()) >= speed) {
-				
-				overflow = (overflow + timer.restart().asMilliseconds() - speed)%speed;
-
-				if(frameIndex < numFrames-1) {
-					frameIndex++;
-				} else if(repeat) {
-					frameIndex = 0;
-				}
-
-				return true;
-			}
-
-			return false;
-		}
+		bool Update();
 		
 		/////////////////////////////////////////////////
 		/// \brief Create a new Animation from a texture
@@ -88,11 +63,8 @@ namespace bzsf {
 		/// \see Drawable::SetAnimation
 		///
 		//////////////////////////////////////////////////
-		Animation(int fWidth, const sf::Texture& t, int Speed, bool Repeat = true) : repeat(Repeat), texture(t), speed(Speed), frameWidth(fWidth), frameIndex(0), overflow(0) {
-			if(t.getSize().x%fWidth!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
-			numFrames = t.getSize().x / fWidth;
-		}
+		Animation(int fWidth, const sf::Texture& t, int Speed, bool Repeat = true);
 
-		Animation() {}
+		Animation();
 	};
 }
