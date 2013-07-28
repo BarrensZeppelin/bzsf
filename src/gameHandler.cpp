@@ -16,7 +16,7 @@ namespace bzsf {
 	int game::runGame() {
 		window->setMouseCursorVisible(true);
 		window->setVerticalSyncEnabled(false);
-		bzsf::game::window->setKeyRepeatEnabled(false);
+		window->setKeyRepeatEnabled(false);
 		while(run && window->isOpen()) {
 			if(gameFunctions.find(currentState) != gameFunctions.end()) {
 				gameFunctions[currentState]();

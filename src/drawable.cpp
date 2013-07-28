@@ -13,7 +13,7 @@ namespace bzsf {
 			anim->Update();
 			if(anim->GetIndex() != animIndex) {
 				animIndex = anim->GetIndex();
-				entity.setTextureRect(sf::IntRect(anim->GetWidth()*anim->GetIndex(), 0, anim->GetWidth(), anim->GetHeight()));
+				entity.setTextureRect(anim->GetFrameRect());
 			}
 		}
 
@@ -24,7 +24,7 @@ namespace bzsf {
 	void Drawable::SetAnimation(bzsf::Animation& a) {
 		anim = &a;
 		entity.setTexture(a.GetTexture());
-		entity.setTextureRect(sf::IntRect(a.GetWidth()*a.GetIndex(), 0, a.GetWidth(), a.GetHeight()));
+		entity.setTextureRect(a.GetFrameRect());
 
 		dType = animation;
 	}

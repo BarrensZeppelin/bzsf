@@ -1,13 +1,17 @@
 namespace bzsf {
-	class Animation {
-	protected:
-		int frameWidth;
-		
-		int frameIndex;
-		int numFrames;
+	class Drawable;
 
-		sf::Uint32 speed; //Speed in milliseconds between each change of frame
-		sf::Uint32 overflow;
+	class Animation {
+		friend Drawable;
+
+	private:
+		sf::Vector2i frameSize;
+		
+		sf::Uint32 frameIndex;
+		sf::Uint32 numFrames;
+
+		sf::Time timePerFrame; //Speed in milliseconds between each change of frame
+		sf::Time overflow;
 
 		bool repeat;
 
@@ -16,19 +20,38 @@ namespace bzsf {
 		sf::Texture texture;
 
 	public:
-		int GetWidth();
-		int GetHeight();
-		int GetIndex();
-		int GetFrames();
-		sf::Uint32 GetSpeed();
-		sf::Clock& GetTimer();
+		sf::Vector2i GetFrameSize();
+		sf::Uint32 GetIndex();
+		sf::Uint32 GetFrameCount();
+		sf::Time GetTimePerFrame();
 		bool IsRepeating();
 		sf::Texture& GetTexture();
 		
 
-		void SetSpeed(sf::Uint32 s);
+		void SetTimePerFrame(sf::Time s);
 		
 		
+		/////////////////////////////////////////////////
+		/// \brief Create a new Animation from a texture
+		///
+		/// After you have created the animation, attach it to to a drawable:
+		/// drawable.SetAnimation(&animation);
+		/// Multiple drawables can use the same animation, but
+		/// they will always be on the same frame and can't have different speeds.
+		///
+		/// \param fSize The size of each frame in the animation
+		/// \param t The texture the animation should use
+		/// \param TimePerFrame The time between each framechange
+		/// \param Repeat Default: true. Repeat animation after it has ended?
+		///
+		/// \see Drawable::SetAnimation
+		///
+		//////////////////////////////////////////////////
+		Animation(sf::Vector2i fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
+
+		Animation();
+
+
 		///////////////////////////////////////////////////
 		/// \brief Sets the frame index of the Animation
 		///
@@ -42,29 +65,15 @@ namespace bzsf {
 		/// \param entity The drawable you want the change to affect
 		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
 		///////////////////////////////////////////////////
-		void SetFrame(int index, bool speedToZero = false);
+		void SetFrame(sf::Uint32 index, bool speedToZero = false);
 
 		
 		bool Update();
-		
-		/////////////////////////////////////////////////
-		/// \brief Create a new Animation from a texture
-		///
-		/// After you have created the animation, attach it to to a drawable:
-		/// drawable.SetAnimation(&animation);
-		/// Multiple drawables can use the same animation, but
-		/// they will always be on the same frame and can't have different speeds.
-		///
-		/// \param fWidth The width of each frame in the animation
-		/// \param t The texture the animation should use
-		/// \param Speed The time in milliseconds between each frame
-		/// \param Repeat Default: true. Repeat animation after it has ended?
-		///
-		/// \see Drawable::SetAnimation
-		///
-		//////////////////////////////////////////////////
-		Animation(int fWidth, const sf::Texture& t, int Speed, bool Repeat = true);
 
-		Animation();
+		
+
+	private:
+		sf::IntRect GetFrameRect();
+
 	};
 }

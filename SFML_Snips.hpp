@@ -1,9 +1,11 @@
 #pragma once
 
+#ifndef BZSF
+#define BZSF
 
 // If SFML hasn't been loaded yet, we should probably do so.
 
-#ifndef SFML_SYSTEM_HPP
+#ifndef SFML_GRAPHICS_HPP
 
 #include <SFML\Graphics.hpp>
 
@@ -27,3 +29,5 @@
 #include <BZeps-SFML-Snippets\snippets\gameHandler.hpp>
 #include <BZeps-SFML-Snippets\snippets\drawable.hpp>
 #include <BZeps-SFML-Snippets\snippets\desaturator.hpp>
+
+#endif

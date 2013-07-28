@@ -1,51 +1,66 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
-	int Animation::GetWidth()				{return frameWidth;				}
-	int Animation::GetHeight()				{return texture.getSize().y;	}
-	int Animation::GetIndex()				{return frameIndex;				}
-	int Animation::GetFrames()				{return numFrames;				}
-	sf::Uint32 Animation::GetSpeed()		{return speed;					}
-	sf::Clock& Animation::GetTimer()		{return timer;					}
+	sf::Vector2i Animation::GetFrameSize()	{return frameSize;				}
+	sf::Uint32 Animation::GetIndex()		{return frameIndex;				}
+	sf::Uint32 Animation::GetFrameCount()	{return numFrames;				}
+	sf::Time Animation::GetTimePerFrame()	{return timePerFrame;			}
 	bool Animation::IsRepeating()			{return repeat;					}
 	sf::Texture& Animation::GetTexture()	{return texture;				}
 
-	void Animation::SetSpeed(sf::Uint32 s)	{speed = s;}
+	void Animation::SetTimePerFrame(sf::Time t)	{timePerFrame = t;}
 
 
-	void Animation::SetFrame(int index, bool speedToZero) {
-		if(index < numFrames) {
-			frameIndex = index;
-		} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
-		
-		if(speedToZero) {speed = 0;}
-	}
 
-
-	bool Animation::Update() {
-		if(speed == 0) {timer.restart(); return true;}
-		else if((overflow + timer.getElapsedTime().asMilliseconds()) >= speed) {
-			
-			overflow = (overflow + timer.restart().asMilliseconds() - speed)%speed;
-
-			if(frameIndex < numFrames-1) {
-				frameIndex++;
-			} else if(repeat) {
-				frameIndex = 0;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-
-	Animation::Animation(int fWidth, const sf::Texture& t, int Speed, bool Repeat) : repeat(Repeat), texture(t), speed(Speed), frameWidth(fWidth), frameIndex(0), overflow(0) {
-		if(t.getSize().x%fWidth!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
-		numFrames = t.getSize().x / fWidth;
+	Animation::Animation(sf::Vector2i fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat) : repeat(Repeat), texture(t), timePerFrame(TimePerFrame), frameSize(fSize), frameIndex(0), overflow(sf::Time::Zero) {
+		if(t.getSize().x%fSize.x!=0 && t.getSize().y%fSize.y!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
+		numFrames = t.getSize().x / fSize.x; // Columns
+		numFrames *= t.getSize().y / fSize.y; // * rows
 	}
 
 
 	Animation::Animation() {}
+
+
+
+	void Animation::SetFrame(sf::Uint32 index, bool speedToZero) {
+		if(index < numFrames) {
+			frameIndex = index;
+		} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
+		
+		if(speedToZero) {timePerFrame = sf::Time::Zero;}
+	}
+
+
+	bool Animation::Update() {
+		if(timePerFrame == sf::Time::Zero) {timer.restart(); return true;}
+		else {
+			bool updated = false;
+			overflow += timer.restart();
+			while(overflow > timePerFrame) {
+				overflow -= timePerFrame;
+				if(frameIndex < numFrames-1) {
+					frameIndex++;
+				} else if(repeat) {
+					frameIndex = 0;
+				}
+
+				updated = true;
+			}
+
+			return updated;
+		}
+	}
+
+
+	sf::IntRect Animation::GetFrameRect() {
+		sf::Uint32 column = frameIndex%(texture.getSize().x / frameSize.x);
+		sf::Uint32 row = (sf::Uint32)floor(float(frameIndex)/(texture.getSize().y / frameSize.y));
+	
+		return sf::IntRect(
+			column*frameSize.x,
+			row*frameSize.y,
+			frameSize.x,
+			frameSize.y);
+	}
 }
