@@ -27,7 +27,7 @@ namespace bzsf {
 		virtual void draw();
 		
 
-		void SetAnimation(bzsf::Animation& a);
+		void SetAnimation(bzsf::Animation* a);
 
 		void SetTexture(sf::Texture& Tex);
 
@@ -37,7 +37,7 @@ namespace bzsf {
 
 		Drawable();
 
-		explicit Drawable(bzsf::Animation& animation);
+		explicit Drawable(bzsf::Animation* animation);
 		
 		explicit Drawable(std::string filename);
 

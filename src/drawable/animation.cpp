@@ -1,7 +1,7 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
-	sf::Vector2i Animation::GetFrameSize()	{return frameSize;				}
+	sf::Vector2u Animation::GetFrameSize()	{return frameSize;				}
 	sf::Uint32 Animation::GetIndex()		{return frameIndex;				}
 	sf::Uint32 Animation::GetFrameCount()	{return numFrames;				}
 	sf::Time Animation::GetTimePerFrame()	{return timePerFrame;			}
@@ -12,10 +12,15 @@ namespace bzsf {
 
 
 
-	Animation::Animation(sf::Vector2i fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat) : repeat(Repeat), texture(t), timePerFrame(TimePerFrame), frameSize(fSize), frameIndex(0), overflow(sf::Time::Zero) {
+	Animation::Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat) : repeat(Repeat), texture(t), timePerFrame(TimePerFrame), frameSize(fSize), frameIndex(0), overflow(sf::Time::Zero) {
 		if(t.getSize().x%fSize.x!=0 && t.getSize().y%fSize.y!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
 		numFrames = t.getSize().x / fSize.x; // Columns
 		numFrames *= t.getSize().y / fSize.y; // * rows
+	}
+
+
+	Animation::Animation(sf::Uint16 columns, sf::Uint16 rows, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat) : repeat(Repeat), texture(t), timePerFrame(TimePerFrame), numFrames(columns*rows), frameIndex(0), overflow(sf::Time::Zero) {
+		frameSize = sf::Vector2u(t.getSize().x / columns, t.getSize().y / rows);	
 	}
 
 
@@ -55,12 +60,13 @@ namespace bzsf {
 
 	sf::IntRect Animation::GetFrameRect() {
 		sf::Uint32 column = frameIndex%(texture.getSize().x / frameSize.x);
-		sf::Uint32 row = (sf::Uint32)floor(float(frameIndex)/(texture.getSize().y / frameSize.y));
+		sf::Uint32 row = sf::Uint32(floor(float(frameIndex)/(texture.getSize().x / frameSize.x)));
 	
-		return sf::IntRect(
+		sf::IntRect pRect(
 			column*frameSize.x,
 			row*frameSize.y,
 			frameSize.x,
 			frameSize.y);
+		return pRect;
 	}
 }

@@ -25,7 +25,7 @@ namespace bzsf {
 		sf::Clock getClock();
 		bool isDead();
 
-		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation& anim);
+		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim);
 
 		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
 
@@ -52,7 +52,7 @@ namespace bzsf {
 
 		void SetTileset(Tileset * ts, bool redraw = false);
 
-		void fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation& anim, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1);
+		void fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation* anim, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1);
 
 		///////////////////////////////////
 		/// \brief Fuel the particle system with particles using a friction method of movement

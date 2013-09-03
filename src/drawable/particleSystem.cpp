@@ -18,7 +18,7 @@ namespace bzsf {
 
 
 
-	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation& anim) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(sf::Color(255, 255, 255)){
+	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(sf::Color(255, 255, 255)){
 		life = _v / friction;
 
 		//animation = Animation(anim);
@@ -114,7 +114,7 @@ namespace bzsf {
 	}
 
 
-	void ParticleSystem::fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation& anim, sf::Color color, float angleSpread, float velocitySpread, float scale) {
+	void ParticleSystem::fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation* anim, sf::Color color, float angleSpread, float velocitySpread, float scale) {
 		if(angleSpread > 2*PI) angleSpread = 2*PI;
 
 		for(int i = 0; i < amount; i++) {

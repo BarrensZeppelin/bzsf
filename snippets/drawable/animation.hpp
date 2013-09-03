@@ -5,7 +5,7 @@ namespace bzsf {
 		friend Drawable;
 
 	private:
-		sf::Vector2i frameSize;
+		sf::Vector2u frameSize;
 		
 		sf::Uint32 frameIndex;
 		sf::Uint32 numFrames;
@@ -20,7 +20,7 @@ namespace bzsf {
 		sf::Texture texture;
 
 	public:
-		sf::Vector2i GetFrameSize();
+		sf::Vector2u GetFrameSize();
 		sf::Uint32 GetIndex();
 		sf::Uint32 GetFrameCount();
 		sf::Time GetTimePerFrame();
@@ -47,7 +47,27 @@ namespace bzsf {
 		/// \see Drawable::SetAnimation
 		///
 		//////////////////////////////////////////////////
-		Animation(sf::Vector2i fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
+		Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
+
+
+		/////////////////////////////////////////////////
+		/// \brief Create a new Animation from a texture
+		///
+		/// After you have created the animation, attach it to to a drawable:
+		/// drawable.SetAnimation(&animation);
+		/// Multiple drawables can use the same animation, but
+		/// they will always be on the same frame and can't have different speeds.
+		///
+		/// \param columns Columns in the animation strip
+		/// \param rows Rows in the animation strip
+		/// \param t The texture the animation should use
+		/// \param TimePerFrame The time between each framechange
+		/// \param Repeat Default: true. Repeat animation after it has ended?
+		///
+		/// \see Drawable::SetAnimation
+		///
+		//////////////////////////////////////////////////
+		Animation(sf::Uint16 columns, sf::Uint16 rows, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
 
 		Animation();
 

@@ -21,10 +21,10 @@ namespace bzsf {
 	}
 
 
-	void Drawable::SetAnimation(bzsf::Animation& a) {
-		anim = &a;
-		entity.setTexture(a.GetTexture());
-		entity.setTextureRect(a.GetFrameRect());
+	void Drawable::SetAnimation(bzsf::Animation* a) {
+		anim = a;
+		entity.setTexture(a->GetTexture());
+		entity.setTextureRect(a->GetFrameRect());
 
 		dType = animation;
 	}
@@ -73,7 +73,7 @@ namespace bzsf {
 		Init();
 	}
 
-	Drawable::Drawable(bzsf::Animation& animation) {
+	Drawable::Drawable(bzsf::Animation* animation) {
 		Init();
 		SetAnimation(animation);
 	}
