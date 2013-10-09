@@ -25,14 +25,14 @@ namespace bzsf {
 		sf::Clock getClock();
 		bool isDead();
 
-		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim);
+		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim, sf::Color col);
 
 		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
 
 		Particle(float _a, float _v, float grav_a, float grav_v, sf::Vector2f pos, float scale, float seconds, sf::Color _color, Tileset * ts);
 
 
-		void update(float mDelta);
+		void update(sf::Time mDelta);
 
 		friend class ParticleSystem;
 

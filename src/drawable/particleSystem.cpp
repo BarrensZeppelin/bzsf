@@ -18,7 +18,7 @@ namespace bzsf {
 
 
 
-	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(sf::Color(255, 255, 255)){
+	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim, sf::Color col) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(col){
 		life = _v / friction;
 
 		//animation = Animation(anim);
@@ -54,7 +54,8 @@ namespace bzsf {
 
 
 
-	void Particle::update(float mDelta) {
+	void Particle::update(sf::Time mDelta) {
+		float fTime = mDelta.asSeconds();
 		float elapsed = fadeClock.getElapsedTime().asSeconds() / life;
 		if(elapsed >= 1) {dead = true; return;}
 		
@@ -62,14 +63,14 @@ namespace bzsf {
 		col.a = sf::Uint8(255 - 255*elapsed);
 		entity.setColor(col);
 
-		entity.setPosition(entity.getPosition().x + cos(force.x)*force.y * mDelta, entity.getPosition().y + sin(force.x)*force.y * mDelta);
+		entity.setPosition(entity.getPosition().x + cos(force.x)*force.y * fTime, entity.getPosition().y + sin(force.x)*force.y * fTime);
 		
 		if(noGravity) {
-			force.y -= gravity.y * mDelta;
+			force.y -= gravity.y * fTime;
 		} else {
 			fixAngle();
-			float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*mDelta);
-			float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*mDelta);
+			float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*fTime);
+			float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*fTime);
 			force.x = ((force.x <= PI/2 || force.x > (3*PI)/2) ? 0 : PI) + atan(b / a);
 			force.y = sqrt(pow(a, 2) + pow(b, 2));
 		}
@@ -100,7 +101,7 @@ namespace bzsf {
 
 
 	void ParticleSystem::draw() {
-		float mDelta = clock.restart().asSeconds();
+		sf::Time mDelta = clock.restart();
 		for(unsigned int i = 0; i < particles.size(); i++){
 			particles[i].update(mDelta);
 
@@ -120,7 +121,7 @@ namespace bzsf {
 		for(int i = 0; i < amount; i++) {
 			float as = float(rand()%(int)(angleSpread*1000))/1000;
 			float vs = float(rand()%(int)(velocity * velocitySpread));
-			particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, friction, origin, scale, anim));
+			particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, friction, origin, scale, anim, color));
 		}
 	} 
 
