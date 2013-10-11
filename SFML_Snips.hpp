@@ -21,6 +21,8 @@
 #include <math.h>
 #include <time.h>
 #include <algorithm>
+#include <memory>
+#include <cassert>
 
 
 // Include the Snippets:

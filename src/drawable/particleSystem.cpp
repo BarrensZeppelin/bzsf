@@ -13,15 +13,14 @@ namespace bzsf {
 	}
 
 
-	sf::Clock Particle::getClock() {return fadeClock;}
-	bool Particle::isDead() {return dead;}
+	sf::Clock Particle::GetClock() {return fadeClock;}
+	bool Particle::IsDead() {return dead;}
 
 
 
-	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim, sf::Color col) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(col){
-		life = _v / friction;
-
-		//animation = Animation(anim);
+	Particle::Particle(float _a, float _v, float friction, sf::Time lifeTime, sf::Vector2f pos, float scale, Animation* anim, sf::Color col) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(col){
+		life = sf::seconds(_v / friction);
+		if(lifeTime < life) life = lifeTime;
 
 		SetAnimation(anim);
 		entity.setPosition(pos);
@@ -31,8 +30,9 @@ namespace bzsf {
 	}
 
 	
-	Particle::Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(_color) {
-		life = _v / friction;
+	Particle::Particle(float _a, float _v, float friction, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(_color) {
+		life = sf::seconds(_v / friction);
+		if(lifeTime < life) life = lifeTime;
 
 		SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
 		entity.setPosition(pos);
@@ -43,7 +43,7 @@ namespace bzsf {
 	}
 
 
-	Particle::Particle(float _a, float _v, float grav_a, float grav_v, sf::Vector2f pos, float scale, float seconds, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(grav_a, grav_v), dead(false), noGravity(false), color(_color), life(seconds) {
+	Particle::Particle(float _a, float _v, float grav_a, float grav_v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(grav_a, grav_v), dead(false), noGravity(false), color(_color), life(lifeTime) {
 		SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
 		entity.setPosition(pos);
 		entity.setScale(scale, scale);
@@ -54,9 +54,9 @@ namespace bzsf {
 
 
 
-	void Particle::update(sf::Time mDelta) {
+	void Particle::Update(sf::Time mDelta) {
 		float fTime = mDelta.asSeconds();
-		float elapsed = fadeClock.getElapsedTime().asSeconds() / life;
+		float elapsed = fadeClock.getElapsedTime().asSeconds() / life.asSeconds();
 		if(elapsed >= 1) {dead = true; return;}
 		
 		sf::Color col = entity.getColor();
@@ -79,75 +79,200 @@ namespace bzsf {
 
 
 
+	inline sf::Color SpreadColor(sf::Color c, float spread) {
+		sf::Uint8 tR = c.r - (c.r * (spread/2)) + rand()%(sf::Uint8)(c.r * spread);
+		if(c.r + tR < 0) tR = -c.r; else if(c.r + tR > 255) tR = 255-c.r;
 
-	// ParticleSystem ////////
-	ParticleSystem::ParticleSystem(Tileset * ts) : tileset(ts) {}
-	ParticleSystem::~ParticleSystem() {
+		sf::Uint8 tG = c.g - (c.g * (spread/2)) + rand()%(sf::Uint8)(c.g * spread);
+		if(c.g + tG < 0) tG = -c.g; else if(c.g + tG > 255) tG = 255-c.g;
+
+		sf::Uint8 tB = c.b - (c.b * (spread/2)) + rand()%(sf::Uint8)(c.b * spread);
+		if(c.b + tB < 0) tB = -c.b; else if(c.b + tB > 255) tB = 255-c.b;
+
+		sf::Uint8 tA = c.a - (c.a * (spread/2)) + rand()%(sf::Uint8)(c.a * spread);
+		if(c.a + tA < 0) tA = -c.a; else if(c.a + tA > 255) tA = 255-c.a;
+
+		return sf::Color(c.r + tR, c.g + tG, c.b + tB, c.a + tA);
+	}
+
+
+
+	// Emitter ////////
+	Emitter::Emitter() :
+		fuel(0),
+		pps(0),
+
+		angle(0),
+		angleSpread(PI/2),
+
+		velocity(100),
+		velocitySpread(0.1f),
+
+		color(),
+		colorSpread(0.01f),
+
+		scale(1.f),
+		scaleSpread(0.05f),
+
+		life(sf::seconds(1)),
+		lifeSpread(0.05f),
+
+		origin(0, 0),
+
+		dead(false),
+		cutType(0),
+		tileset(nullptr),
+		anim(nullptr) {}
+	
+	Emitter::~Emitter() {
 		particles.clear();
 	}
 
+	bool Emitter::IsDead() {return dead;}
+	
+	void Emitter::Kill(Cut cut) {
+		cutType = cut;
 
-	void ParticleSystem::SetTileset(Tileset * ts, bool redraw) {
+		if(cut == HARD) dead = true;
+		else if(cut == MEDIUM) fuel = 0;
+	}
+
+
+
+	void Emitter::SetTileset(Tileset * ts, bool redraw) {
 		tileset = ts;
+		anim = nullptr;
 
 		if(redraw) {
-			for(std::vector<Particle>::iterator iter = particles.begin(); iter!=particles.end(); iter++) {
-				Particle particle = *iter;
+			for(Particle& p : particles) {
+				p.SetTileset(ts);
+			}
+		}
+	}
 
-				particle.SetTileset(tileset);
+	void Emitter::SetAnimation(Animation* a, bool redraw) {
+		anim = a;
+		tileset = nullptr;
+
+		if(redraw) {
+			for(Particle& p : particles) {
+				p.SetAnimation(a);
+				p.GetEntity().setOrigin((sf::Vector2f)a->GetFrameSize()/2.f);
 			}
 		}
 	}
 
 
-	void ParticleSystem::draw() {
+	void Emitter::SetAngle(float a, float spread)		{angle = a; angleSpread = spread;		}
+	void Emitter::SetVelocity(float v, float spread)	{velocity = v; velocitySpread = spread;	}
+	void Emitter::SetColor(sf::Color c, float spread, bool redraw) {
+		color = c;
+		colorSpread = spread;
+
+		if(redraw) {
+			for(Particle& p : particles) {
+				p.GetEntity().setColor(SpreadColor(color, colorSpread));
+			}
+		}
+	}
+	void Emitter::SetScale(float s, float spread, bool redraw) {
+		scale = s;
+		scaleSpread = spread;
+
+		if(redraw) {
+			for(Particle& p : particles) {
+				float ss = float(rand()%(sf::Uint32)((scale*scaleSpread)*1000))/1000;
+				p.GetEntity().setScale(scale - (scale*scaleSpread)/2 + ss, scale - (scale*scaleSpread)/2 + ss);
+			}
+		}
+	}
+	void Emitter::SetLifeTime(sf::Time l, float spread)	{life = l; lifeSpread = spread;			}
+	void Emitter::SetOrigin(sf::Vector2f o)				{origin = o;							}
+	void Emitter::SetParticlesPerSecond(sf::Uint32 p)	{pps = p;								}
+
+
+	void Emitter::Fuel(sf::Uint32 amount, bool relative) {
+		if(cutType == 0) {if(relative) fuel+=amount; else fuel = amount;}
+	}
+
+
+
+	void Emitter::Draw() {
 		sf::Time mDelta = clock.restart();
-		for(unsigned int i = 0; i < particles.size(); i++){
-			particles[i].update(mDelta);
-
-			if(particles[i].isDead()) {
-				particles.erase(particles.begin() + i);
-				i--;
-			} else {
-				particles[i].draw();
+		if(fuel > 0) {
+			sf::Uint32 pToAdd = fuel;
+			if(pps > 0) {
+				pToAdd = (mDelta.asSeconds() / 1.f) * pps;
+				if(pToAdd > fuel) pToAdd = fuel;
 			}
+
+			for(sf::Uint32 i = 0; i<pToAdd; i++) {
+				//particles.push_back(Particle()); // Add New particle
+			}
+
+			fuel -= pToAdd;
 		}
-	}
-
-
-	void ParticleSystem::fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation* anim, sf::Color color, float angleSpread, float velocitySpread, float scale) {
-		if(angleSpread > 2*PI) angleSpread = 2*PI;
-
-		for(int i = 0; i < amount; i++) {
-			float as = float(rand()%(int)(angleSpread*1000))/1000;
-			float vs = float(rand()%(int)(velocity * velocitySpread));
-			particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, friction, origin, scale, anim, color));
+		
+		
+		if(cutType == SOFT) {
+			if(fuel == 0 && particles.size() == 0) dead = true;
+		} else if(cutType == MEDIUM) {
+			if(particles.size() == 0) dead = true;
 		}
-	} 
 
-
-
-	void ParticleSystem::fuelFric(float angle, float velocity, int amount, float friction, sf::Vector2f origin, sf::Color color, float angleSpread, float velocitySpread, float scale) {
-		if(angleSpread > 2*PI) angleSpread = 2*PI;
-
-		for(int i = 0; i < amount; i++) {
-			float as = float(rand()%(int)(angleSpread*1000))/1000;
-			float vs = float(rand()%(int)(velocity * velocitySpread));
-			particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, friction, origin, scale, color, tileset));
-		}
-	}
-
-
-
-	void ParticleSystem::fuelGrav(float angle, float velocity, float gravity_angle, float gravity_velocity, int amount, sf::Vector2f origin, sf::Color color, float life, float angleSpread, float velocitySpread, float scale) {
-		if(angleSpread > 2*PI) angleSpread = 2*PI;
-
-
-		for(int i = 0; i < amount; i++) {
-			float as = float(rand()%(int)(angleSpread*1000))/1000;
-			float vs = float(rand()%(int)(velocity * velocitySpread));
-			particles.push_back(Particle(angle - angleSpread/2 + as, velocity - (velocity * velocitySpread) + vs*2, gravity_angle, gravity_velocity, origin, scale, life, color, tileset));
+		if(!dead) {
+			particles.erase(std::remove_if(particles.begin(), particles.end(), [] (Particle& p) {return p.IsDead();}), particles.end());
+			
+			for(Particle& p : particles){
+				p.Update(mDelta);
+				p.draw();
+			}
 		}
 	}
 	//////////////////////////
+
+
+
+
+
+
+	// ParticleSystem ////////
+	std::vector<std::unique_ptr<Emitter>> ParticleSystem::unownedEmitters = std::vector<std::unique_ptr<Emitter>>();
+
+
+
+	Emitter* ParticleSystem::NewEmitter() {
+		std::unique_ptr<Emitter> e(new Emitter());
+		e->Kill(Emitter::SOFT);
+		unownedEmitters.push_back(std::move(e));
+
+		return unownedEmitters[unownedEmitters.size()-1].get();
+	}
+
+
+	std::vector<std::unique_ptr<Emitter>>& ParticleSystem::GetUnownedEmitters() {
+		return unownedEmitters;
+	}
+
+
+	// Draw
+	void ParticleSystem::Draw() {
+		unownedEmitters.erase(std::remove_if(unownedEmitters.begin(), unownedEmitters.end(), [] (std::unique_ptr<Emitter>& e) {return e->IsDead();}), unownedEmitters.end());
+
+
+		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
+			e->Draw();
+		}
+	}
+
+
+	// Destructor
+	ParticleSystem::~ParticleSystem() {
+		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
+			e.reset();
+		}
+	}
+
+
+	/////////////////////////
 }

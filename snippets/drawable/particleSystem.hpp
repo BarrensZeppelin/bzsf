@@ -1,6 +1,6 @@
 namespace bzsf {
 
-	class ParticleSystem;
+	class Emitter;
 
 
 	class Particle : public Drawable {
@@ -14,7 +14,7 @@ namespace bzsf {
 
 		bool noGravity;
 
-		float life;
+		sf::Time life;
 		sf::Clock fadeClock;
 
 		void SetTileset(Tileset * ts);
@@ -22,66 +22,108 @@ namespace bzsf {
 		void fixAngle();
 
 	public:
-		sf::Clock getClock();
-		bool isDead();
+		sf::Clock GetClock();
+		bool IsDead();
 
-		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, Animation* anim, sf::Color col);
+		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, Animation* anim, sf::Color col);
 
-		Particle(float _a, float _v, float friction, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
+		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
 
-		Particle(float _a, float _v, float grav_a, float grav_v, sf::Vector2f pos, float scale, float seconds, sf::Color _color, Tileset * ts);
+		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
 
 
-		void update(sf::Time mDelta);
+		void Update(sf::Time mDelta);
 
-		friend class ParticleSystem;
+		friend class Emitter;
 
 	};
 
 
 
-	class ParticleSystem {
-	
+	class Emitter {
+		enum Cut {SOFT = 1, MEDIUM, HARD};
+
+
+		sf::Uint32 fuel;
+		sf::Uint32 pps;
+
+		float angle;
+		float angleSpread;
+
+		float velocity;
+		float velocitySpread;
+
+		sf::Color color;
+		float colorSpread;
+
+		float scale;
+		float scaleSpread;
+
+		sf::Time life;
+		float lifeSpread;
+
+		sf::Vector2f origin;
+
+
+
+		sf::Uint8 cutType;
+		bool dead;
+
+
 		sf::Clock clock;
 
 		std::vector<Particle> particles;
 
-		Tileset * tileset;
+		Tileset* tileset;
+		Animation* anim;
+
+
 	public:
-		explicit ParticleSystem(Tileset * ts);
+		explicit Emitter();
 
-		void SetTileset(Tileset * ts, bool redraw = false);
+		void SetTileset(Tileset* ts, bool redraw = false);
+		void SetAnimation(Animation* a, bool redraw = false);
 
-		void fuelFricAnim(float angle, float velocity, int amount, float friction, sf::Vector2f origin, bzsf::Animation* anim, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1);
+		void SetAngle(float a,		float spread = PI/2);
+		void SetVelocity(float v,	float spread = 0.1f);
+		void SetColor(sf::Color c,	float spread = 0.01f, bool redraw = false);
+		void SetScale(float s,		float spread = 0.05f, bool redraw = false);
+		void SetLifeTime(sf::Time l,float spread = 0.05f);
 
-		///////////////////////////////////
-		/// \brief Fuel the particle system with particles using a friction method of movement
-		///
-		/// angles are in radians
-		///	velocity is pixels per second
-		/// friction is also pixels per second
-		/// 
-		/// velocity = velocity - (velocity * velocitySpread) + rand()%(velocity * velocitySpread)*2
-		///
-		////////////////////////////////////////
-		void fuelFric(float angle, float velocity, int amount, float friction, sf::Vector2f origin, sf::Color color = sf::Color(255, 255, 255, 255), float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1);
+		void SetOrigin(sf::Vector2f o);
+		
+		void SetParticlesPerSecond(sf::Uint32 p);
 
-		///////////////////////////////////
-		/// \brief Fuel the particle system with particles affected by a gravity
-		///
-		/// angles are in radians
-		///	velocity is pixels per second
-		/// friction is also pixels per second
-		/// life is lifetime in seconds
-		/// 
-		/// velocity = velocity - (velocity * velocitySpread) + rand()%(velocity * velocitySpread)*2
-		///
-		////////////////////////////////////////
-		void fuelGrav(float angle, float velocity, float gravity_angle, float gravity_velocity, int amount, sf::Vector2f origin, sf::Color color = sf::Color(255, 255, 255, 255), float life = 2.f, float angleSpread = PI/4, float velocitySpread = 0.5f, float scale = 1);
+
+		void Fuel(sf::Uint32 amount, bool relative = true);
+
+
+		bool IsDead();
+
+		void Kill(Cut cut);
+		void Draw();
+
+		~Emitter();
+
+		friend class ParticleSystem;
+	};
 
 
 
-		void draw();
+	class ParticleSystem {
+
+		static std::vector<std::unique_ptr<Emitter>> unownedEmitters;
+
+
+	public:
+		static Emitter* NewEmitter();
+
+		static std::vector<std::unique_ptr<Emitter>>& GetUnownedEmitters();
+
+		
+
+		static void Draw();
+
 
 		~ParticleSystem();
 	};
