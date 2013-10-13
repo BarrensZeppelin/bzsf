@@ -1,13 +1,36 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
+
+
+
 	// Particle ////////////
 	void Particle::SetTileset(Tileset * ts) {
 		SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
 		entity.setOrigin(float(GetTile()->width)/2, float(GetTile()->height)/2);
 	}
 
-	void Particle::fixAngle() {
+	void Particle::CopyAnimation(Animation* a) {
+		animCopy.reset(new Animation(a->GetFrameSize(), a->GetTexture(), a->GetTimePerFrame(), a->IsRepeating()));
+		SetAnimation(animCopy.get());
+	}
+
+	Particle::Particle(const Particle& p) : animCopy(nullptr) {
+		if(p.anim != nullptr)
+			CopyAnimation(p.anim);
+		else
+			SetTile(dynamic_cast<Drawable *>(const_cast<Particle*>(&p))->GetTile());
+	
+		Initialise(p.force.x, p.force.y,
+			p.friction,
+			p.gravity,
+			p.life,
+			p.entity.getPosition(),
+			p.entity.getScale().x,
+			p.entity.getColor());
+	}
+
+	void Particle::FixAngle() {
 		while(force.x < 0) {force.x += 2*PI;}
 		while(force.x >= 2*PI) {force.x -= 2*PI;}
 	}
@@ -17,39 +40,34 @@ namespace bzsf {
 	bool Particle::IsDead() {return dead;}
 
 
+	void Particle::Initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col) {
+		dead = false;
+		force = sf::Vector2f(_a, _v);
+		friction = fric;
+		gravity = grav;
+		startAlpha = col.a;
+		life = lifeTime;
 
-	Particle::Particle(float _a, float _v, float friction, sf::Time lifeTime, sf::Vector2f pos, float scale, Animation* anim, sf::Color col) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(col){
-		life = sf::seconds(_v / friction);
-		if(lifeTime < life) life = lifeTime;
-
-		SetAnimation(anim);
+		if(grav.y == 0) if(_v / fric < lifeTime.asSeconds()) life = sf::seconds(_v / fric);
+		
+		entity.setColor(col);
 		entity.setPosition(pos);
 		entity.setScale(scale, scale);
 		entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
-		entity.setColor(color);
+		entity.setRotation(RADTODEG(force.x));
+	}
+
+	Particle::Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Animation* anim) : animCopy(nullptr) {
+		CopyAnimation(anim);
+
+		Initialise(_a, _v, fric, grav, lifeTime, pos, scale, col);
 	}
 
 	
-	Particle::Particle(float _a, float _v, float friction, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(-_a, friction), dead(false), noGravity(true), color(_color) {
-		life = sf::seconds(_v / friction);
-		if(lifeTime < life) life = lifeTime;
+	Particle::Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Tileset * ts) : animCopy(nullptr) {
+		SetTileset(ts);
 
-		SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
-		entity.setPosition(pos);
-		entity.setScale(scale, scale);
-		entity.setRotation(RADTODEG(_a));
-		entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
-		entity.setColor(color);
-	}
-
-
-	Particle::Particle(float _a, float _v, float grav_a, float grav_v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts) : force(_a, _v), gravity(grav_a, grav_v), dead(false), noGravity(false), color(_color), life(lifeTime) {
-		SetTile(&(ts->at(rand()%ts->size()).at(rand()%ts[0].size())));
-		entity.setPosition(pos);
-		entity.setScale(scale, scale);
-		entity.setRotation(RADTODEG(_a));
-		entity.setOrigin(entity.getLocalBounds().width/2, entity.getLocalBounds().height/2);
-		entity.setColor(color);
+		Initialise(_a, _v, fric, grav, lifeTime, pos, scale, col);
 	}
 
 
@@ -60,36 +78,39 @@ namespace bzsf {
 		if(elapsed >= 1) {dead = true; return;}
 		
 		sf::Color col = entity.getColor();
-		col.a = sf::Uint8(255 - 255*elapsed);
+		col.a = sf::Uint8(startAlpha - startAlpha*elapsed);
 		entity.setColor(col);
 
-		entity.setPosition(entity.getPosition().x + cos(force.x)*force.y * fTime, entity.getPosition().y + sin(force.x)*force.y * fTime);
+
+		force.y -= friction * fTime;
 		
-		if(noGravity) {
-			force.y -= gravity.y * fTime;
-		} else {
-			fixAngle();
+		if(gravity.y != 0) {
+			FixAngle();
 			float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*fTime);
 			float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*fTime);
 			force.x = ((force.x <= PI/2 || force.x > (3*PI)/2) ? 0 : PI) + atan(b / a);
 			force.y = sqrt(pow(a, 2) + pow(b, 2));
 		}
+
+		if(force.y <= 0) {dead = true; return;}
+
+		entity.setPosition(entity.getPosition().x + cos(force.x)*force.y * fTime, entity.getPosition().y + sin(force.x)*force.y * fTime);
 	}
 	///////////////////////
 
 
 
 	inline sf::Color SpreadColor(sf::Color c, float spread) {
-		sf::Uint8 tR = c.r - (c.r * (spread/2)) + rand()%(sf::Uint8)(c.r * spread);
+		sf::Int16 tR = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
 		if(c.r + tR < 0) tR = -c.r; else if(c.r + tR > 255) tR = 255-c.r;
 
-		sf::Uint8 tG = c.g - (c.g * (spread/2)) + rand()%(sf::Uint8)(c.g * spread);
+		sf::Int16 tG = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
 		if(c.g + tG < 0) tG = -c.g; else if(c.g + tG > 255) tG = 255-c.g;
 
-		sf::Uint8 tB = c.b - (c.b * (spread/2)) + rand()%(sf::Uint8)(c.b * spread);
+		sf::Int16 tB = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
 		if(c.b + tB < 0) tB = -c.b; else if(c.b + tB > 255) tB = 255-c.b;
 
-		sf::Uint8 tA = c.a - (c.a * (spread/2)) + rand()%(sf::Uint8)(c.a * spread);
+		sf::Int16 tA = -(255 * (spread/2))*0.1f + (floor(c.a * spread) != 0 ? rand()%(sf::Uint8)(255 * spread)*0.1f : 0);
 		if(c.a + tA < 0) tA = -c.a; else if(c.a + tA > 255) tA = 255-c.a;
 
 		return sf::Color(c.r + tR, c.g + tG, c.b + tB, c.a + tA);
@@ -97,10 +118,12 @@ namespace bzsf {
 
 
 
+
 	// Emitter ////////
 	Emitter::Emitter() :
 		fuel(0),
 		pps(0),
+		ppsOverflow(0),
 
 		angle(0),
 		angleSpread(PI/2),
@@ -108,7 +131,7 @@ namespace bzsf {
 		velocity(100),
 		velocitySpread(0.1f),
 
-		color(),
+		color(255, 255, 255, 255),
 		colorSpread(0.01f),
 
 		scale(1.f),
@@ -119,7 +142,11 @@ namespace bzsf {
 
 		origin(0, 0),
 
+		friction(0),
+		gravity(0, 0),
+
 		dead(false),
+		firstFuel(false),
 		cutType(0),
 		tileset(nullptr),
 		anim(nullptr) {}
@@ -156,7 +183,7 @@ namespace bzsf {
 
 		if(redraw) {
 			for(Particle& p : particles) {
-				p.SetAnimation(a);
+				p.CopyAnimation(a);
 				p.GetEntity().setOrigin((sf::Vector2f)a->GetFrameSize()/2.f);
 			}
 		}
@@ -171,7 +198,9 @@ namespace bzsf {
 
 		if(redraw) {
 			for(Particle& p : particles) {
-				p.GetEntity().setColor(SpreadColor(color, colorSpread));
+				sf::Color c = SpreadColor(color, colorSpread);
+				p.startAlpha = c.a;
+				p.GetEntity().setColor(c);
 			}
 		}
 	}
@@ -189,10 +218,12 @@ namespace bzsf {
 	void Emitter::SetLifeTime(sf::Time l, float spread)	{life = l; lifeSpread = spread;			}
 	void Emitter::SetOrigin(sf::Vector2f o)				{origin = o;							}
 	void Emitter::SetParticlesPerSecond(sf::Uint32 p)	{pps = p;								}
-
+	void Emitter::SetFriction(float f)					{friction = f;							}
+	void Emitter::SetGravity(sf::Vector2f grav)			{gravity = grav;						}
+	void Emitter::SetGravity(float angle, float velocity) {SetGravity(sf::Vector2f(angle, velocity));}
 
 	void Emitter::Fuel(sf::Uint32 amount, bool relative) {
-		if(cutType == 0) {if(relative) fuel+=amount; else fuel = amount;}
+		if(cutType == 0 || (cutType == SOFT && !firstFuel)) {if(relative) fuel+=amount; else fuel = amount; firstFuel = true;}
 	}
 
 
@@ -202,12 +233,22 @@ namespace bzsf {
 		if(fuel > 0) {
 			sf::Uint32 pToAdd = fuel;
 			if(pps > 0) {
-				pToAdd = (mDelta.asSeconds() / 1.f) * pps;
+				pToAdd = 0;
+				ppsOverflow += mDelta.asSeconds() * (float)pps;
+				while(ppsOverflow >= 1) {pToAdd++; ppsOverflow--;}
 				if(pToAdd > fuel) pToAdd = fuel;
 			}
 
 			for(sf::Uint32 i = 0; i<pToAdd; i++) {
-				//particles.push_back(Particle()); // Add New particle
+				float a = angle - (angleSpread/2) + float(rand()%(sf::Uint32)(angleSpread*1000))/1000;
+				float v = velocity - (velocity * velocitySpread/2) + float(rand()%(sf::Uint32)(velocity * velocitySpread * 1000))/1000;
+				float l = life.asSeconds() - (life.asSeconds() * lifeSpread/2) + float(rand()%(sf::Uint32)(life.asSeconds() * lifeSpread * 1000))/1000;
+				float s = scale - (scale * scaleSpread/2) + float(rand()%(sf::Uint32)(scale * scaleSpread*1000))/1000;
+
+				if(anim == nullptr) 
+					particles.push_back(Particle(a, v, friction, gravity, sf::seconds(l), origin, s, SpreadColor(color, colorSpread), tileset));// Add New particle
+				else 
+					particles.push_back(Particle(a, v, friction, gravity, sf::seconds(l), origin, s, SpreadColor(color, colorSpread), anim));// Add New particle
 			}
 
 			fuel -= pToAdd;
@@ -234,7 +275,7 @@ namespace bzsf {
 
 
 
-
+	
 
 	// ParticleSystem ////////
 	std::vector<std::unique_ptr<Emitter>> ParticleSystem::unownedEmitters = std::vector<std::unique_ptr<Emitter>>();
@@ -264,15 +305,5 @@ namespace bzsf {
 			e->Draw();
 		}
 	}
-
-
-	// Destructor
-	ParticleSystem::~ParticleSystem() {
-		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
-			e.reset();
-		}
-	}
-
-
 	/////////////////////////
 }

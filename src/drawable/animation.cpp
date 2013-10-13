@@ -27,7 +27,6 @@ namespace bzsf {
 	Animation::Animation() {}
 
 
-
 	void Animation::SetFrame(sf::Uint32 index, bool speedToZero) {
 		if(index < numFrames) {
 			frameIndex = index;

@@ -71,7 +71,6 @@ namespace bzsf {
 
 		Animation();
 
-
 		///////////////////////////////////////////////////
 		/// \brief Sets the frame index of the Animation
 		///

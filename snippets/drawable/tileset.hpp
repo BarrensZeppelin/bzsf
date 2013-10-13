@@ -14,6 +14,7 @@ namespace bzsf {
 		~tsTile();
 	};
 
+
 	std::vector<std::vector<tsTile>> newTileset(sf::Texture * texture, int hSize, int vSize);
 
 	typedef std::vector<std::vector<tsTile>> Tileset;

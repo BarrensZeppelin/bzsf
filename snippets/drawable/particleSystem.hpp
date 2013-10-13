@@ -2,50 +2,52 @@ namespace bzsf {
 
 	class Emitter;
 
-
 	class Particle : public Drawable {
 		// No randomization is done within this class except choosing a tile
 
 		sf::Vector2f force; // x -> angle & y -> velocity
-		sf::Vector2f gravity;
 		
-		sf::Color color;
 		bool dead;
-
-		bool noGravity;
+		sf::Uint8 startAlpha;
 
 		sf::Time life;
 		sf::Clock fadeClock;
 
-		void SetTileset(Tileset * ts);
+		float friction;
+		sf::Vector2f gravity;
 
-		void fixAngle();
+		std::shared_ptr<Animation> animCopy;
+
+		void SetTileset(Tileset * ts);
+		void CopyAnimation(Animation* a);
+
+		void FixAngle();
+
+		void Initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col);
 
 	public:
 		sf::Clock GetClock();
 		bool IsDead();
 
-		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, Animation* anim, sf::Color col);
+		Particle(const Particle&);
 
-		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
+		Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Animation* anim);
 
-		Particle(float _a, float _v, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color _color, Tileset * ts);
-
+		Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Tileset * ts);
 
 		void Update(sf::Time mDelta);
 
 		friend class Emitter;
-
 	};
 
-
-
 	class Emitter {
+	public:
 		enum Cut {SOFT = 1, MEDIUM, HARD};
-
-
+	
+	private:
 		sf::Uint32 fuel;
 		sf::Uint32 pps;
+		float ppsOverflow;
 
 		float angle;
 		float angleSpread;
@@ -65,9 +67,14 @@ namespace bzsf {
 		sf::Vector2f origin;
 
 
+		float friction;
+		sf::Vector2f gravity;
+
 
 		sf::Uint8 cutType;
 		bool dead;
+
+		bool firstFuel;
 
 
 		sf::Clock clock;
@@ -94,6 +101,10 @@ namespace bzsf {
 		
 		void SetParticlesPerSecond(sf::Uint32 p);
 
+		void SetFriction(float f);
+		void SetGravity(float angle, float velocity);
+		void SetGravity(sf::Vector2f grav);
+
 
 		void Fuel(sf::Uint32 amount, bool relative = true);
 
@@ -108,24 +119,16 @@ namespace bzsf {
 		friend class ParticleSystem;
 	};
 
-
-
 	class ParticleSystem {
-
 		static std::vector<std::unique_ptr<Emitter>> unownedEmitters;
-
 
 	public:
 		static Emitter* NewEmitter();
 
 		static std::vector<std::unique_ptr<Emitter>>& GetUnownedEmitters();
-
 		
 
 		static void Draw();
-
-
-		~ParticleSystem();
 	};
 
 } //ENDOF NAMESPACE bzsf
