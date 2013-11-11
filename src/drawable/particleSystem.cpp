@@ -16,10 +16,10 @@ namespace bzsf {
 	}
 
 	Particle::Particle(const Particle& p) : animCopy(nullptr) {
-		if(p.anim != nullptr)
-			CopyAnimation(p.anim);
+		if(p.animCopy != nullptr)
+			CopyAnimation(p.animCopy.get());
 		else
-			SetTile(dynamic_cast<Drawable *>(const_cast<Particle*>(&p))->GetTile());
+			SetTile(dynamic_cast<const Drawable *>(&p)->GetTile());
 	
 		Initialise(p.force.x, p.force.y,
 			p.friction,

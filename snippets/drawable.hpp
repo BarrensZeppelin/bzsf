@@ -17,7 +17,7 @@ namespace bzsf {
 		int animIndex;
 
 	public:
-		tsTile * GetTile();
+		const tsTile * GetTile() const;
 		sf::Sprite& GetEntity();
 		Animation *GetAnimation();
 		sf::Texture& GetTexture();
@@ -27,17 +27,17 @@ namespace bzsf {
 		virtual void draw();
 		
 
-		void SetAnimation(bzsf::Animation* a);
+		void SetAnimation(Animation* a);
 
 		void SetTexture(sf::Texture& Tex);
 
-		void SetTile(bzsf::tsTile * tl);
+		void SetTile(const tsTile * tl);
 
 		void Init();
 
 		Drawable();
 
-		explicit Drawable(bzsf::Animation* animation);
+		explicit Drawable(Animation* animation);
 		
 		explicit Drawable(std::string filename);
 

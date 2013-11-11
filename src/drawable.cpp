@@ -2,7 +2,7 @@
 
 namespace bzsf {
 	
-	tsTile *		Drawable::GetTile()		{return texTile;}
+	const tsTile *	Drawable::GetTile()	const{return texTile;}
 	sf::Sprite&		Drawable::GetEntity()	{return entity;}
 	Animation *		Drawable::GetAnimation(){return anim;}
 	sf::Texture&	Drawable::GetTexture()	{return tex;}
@@ -44,7 +44,7 @@ namespace bzsf {
 	}
 
 
-	void Drawable::SetTile(bzsf::tsTile * tl) {
+	void Drawable::SetTile(const bzsf::tsTile * tl) {
 		float xPos = entity.getPosition().x;
 		float yPos = entity.getPosition().y;
 		
@@ -53,19 +53,19 @@ namespace bzsf {
 
 		entity.setPosition(xPos, yPos);
 
-		texTile = tl;
+		texTile = const_cast<bzsf::tsTile*>(tl);
 
 		dType = tile;
 	}
 
 	
 	void Drawable::Init() {
-		texTile = 0;
+		texTile = nullptr;
 		animIndex = 0;
 		dType = none;
 		entity = sf::Sprite();
 		tex = sf::Texture();
-		anim = 0;
+		anim = nullptr;
 	}
 
 

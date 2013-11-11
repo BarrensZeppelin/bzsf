@@ -15,7 +15,7 @@ An extended sf::Sprite with tileset & animation support.
 Desaturator
 -----------
 Takes an sf::Image and desaturates it over a set duration.    
-Note: Not suitable for larger images, it will take a lot of CPU-power.
+Note: Not suitable for larger images due to CPU-hogging.
 
 ParticleSystem
 --------------
@@ -23,10 +23,12 @@ A simple yet powerful particle system.
 
 Features include:
 
+- Animated particles. (With use of bzsf::Animation)
 - Two modes of particle decay. Friction until speed hits zero, or a set lifetime.
 - Gravity in any desired direction.
 - Lots of control over visual representation.
+- Create anonymous/unowned particle emitters which destroy themselves after a set amount of time.
 
-
-
-Example project that shows the various uses of my snippets: 
+### Note ###
+Current binary is tested only with Visual Studio Express 2013.    
+For other environments, compile the source code and create your own binary.
