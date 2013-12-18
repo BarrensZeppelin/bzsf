@@ -26,6 +26,9 @@ namespace bzsf {
 		sf::Time GetTimePerFrame();
 		bool IsRepeating();
 		sf::Texture& GetTexture();
+
+
+		sf::IntRect GetFrameRect();
 		
 
 		void SetTimePerFrame(sf::Time s);
@@ -89,10 +92,7 @@ namespace bzsf {
 		
 		bool Update();
 
-		
 
-	private:
-		sf::IntRect GetFrameRect();
 
 	};
 }

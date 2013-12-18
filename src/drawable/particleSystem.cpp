@@ -31,8 +31,8 @@ namespace bzsf {
 	}
 
 	void Particle::FixAngle() {
-		while(force.x < 0) {force.x += 2*PI;}
-		while(force.x >= 2*PI) {force.x -= 2*PI;}
+		while(force.x < 0) force.x += 2*PI;
+		while(force.x >= 2*PI) force.x -= 2*PI;
 	}
 
 

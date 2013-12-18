@@ -30,6 +30,7 @@ namespace bzsf {
 	void Animation::SetFrame(sf::Uint32 index, bool speedToZero) {
 		if(index < numFrames) {
 			frameIndex = index;
+			timer.restart();
 		} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
 		
 		if(speedToZero) {timePerFrame = sf::Time::Zero;}
