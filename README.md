@@ -29,6 +29,12 @@ Features include:
 - Lots of control over visual representation.
 - Create anonymous/unowned particle emitters which destroy themselves after a set amount of time.
 
+OnScreenLog
+-----------
+For non-console applications it can often be tedious to display debugging information without some sort of console log.    
+This module is here to help: Simple yet smart, it offers the most necessary customisation options and an Append(std::string) function.    
+Customise it the way you like it and then call its Draw() function and you are good to go. (In most cases it is advisable to reset the view to the window's default view first)
+
 ### Note ###
 Current binary is tested only with Visual Studio Express 2013.    
 For other environments, compile the source code and create your own binary.
