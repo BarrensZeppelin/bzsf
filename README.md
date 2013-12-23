@@ -31,7 +31,7 @@ Features include:
 
 OnScreenLog
 -----------
-For non-console applications it can often be tedious to display debugging information without some sort of console log.    
+For non-console applications it can often be tedious to display debugging information without some sort of console log.
 This module is here to help: Simple yet smart, it offers the most necessary customisation options and an Append(std::string) function.    
 Customise it the way you like it and then call its Draw() function and you are good to go. (In most cases it is advisable to reset the view to the window's default view first)
 
