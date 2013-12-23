@@ -23,6 +23,7 @@
 #include <algorithm>
 #include <memory>
 #include <cassert>
+#include <deque>
 
 
 // Include the Snippets:
@@ -31,5 +32,6 @@
 #include <BZeps-SFML-Snippets\snippets\gameHandler.hpp>
 #include <BZeps-SFML-Snippets\snippets\drawable.hpp>
 #include <BZeps-SFML-Snippets\snippets\desaturator.hpp>
+#include <BZeps-SFML-Snippets\snippets\onScreenLog.hpp>
 
 #endif
