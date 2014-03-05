@@ -7,13 +7,15 @@ namespace bzsf {
 	bool game::run = true;
 	std::map<sf::Uint16, void (*)()> game::gameFunctions = std::map<sf::Uint16, void (*)()>();
 	
-	sf::RenderWindow * game::window = new sf::RenderWindow();
+	sf::RenderWindow * game::window = nullptr;
 
 	void game::addFunc(sf::Uint16 pos, void (*func)()) {
 		gameFunctions.insert(std::pair<sf::Uint16, void (*)()>(pos, func));
 	}
 
 	int game::runGame() {
+		assert(window != nullptr);
+
 		window->setMouseCursorVisible(true);
 		window->setVerticalSyncEnabled(false);
 		window->setKeyRepeatEnabled(false);

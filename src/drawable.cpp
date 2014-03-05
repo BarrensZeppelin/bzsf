@@ -9,6 +9,8 @@ namespace bzsf {
 	Drawable::drawType	Drawable::GetDrawType() {return dType;}
 
 	void Drawable::draw() {
+		assert(game::window != nullptr);
+		
 		if(dType == animation) {
 			anim->Update();
 			if(anim->GetIndex() != animIndex) {

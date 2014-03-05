@@ -38,9 +38,9 @@ namespace bzsf {
 		/// \brief Create a new Animation from a texture
 		///
 		/// After you have created the animation, attach it to to a drawable:
-		/// drawable.SetAnimation(&animation);
+		///		drawable.SetAnimation(&animation);
 		/// Multiple drawables can use the same animation, but
-		/// they will always be on the same frame and can't have different speeds.
+		///		they will always be on the same frame and can't have different speeds.
 		///
 		/// \param fSize The size of each frame in the animation
 		/// \param t The texture the animation should use
@@ -57,9 +57,9 @@ namespace bzsf {
 		/// \brief Create a new Animation from a texture
 		///
 		/// After you have created the animation, attach it to to a drawable:
-		/// drawable.SetAnimation(&animation);
+		///		drawable.SetAnimation(&animation);
 		/// Multiple drawables can use the same animation, but
-		/// they will always be on the same frame and can't have different speeds.
+		///		they will always be on the same frame and can't have different speeds.
 		///
 		/// \param columns Columns in the animation strip
 		/// \param rows Rows in the animation strip

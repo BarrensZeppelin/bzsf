@@ -30,8 +30,8 @@ namespace bzsf {
 
 	void OnScreenLog::SetSize(sf::Uint32 size) {
 		if(size != maxSize) {
-			UpdateEntities(); // Init new text entities
 			maxSize = size;
+			UpdateEntities(); // Init new text entities
 		}
 	}
 
@@ -76,6 +76,7 @@ namespace bzsf {
 		rowOffset(offset),
 		logColor(color),
 		fadeTime(fadeDelay, fadeDuration) {
+
 		UpdateEntities();
 
 	}
@@ -83,6 +84,8 @@ namespace bzsf {
 
 
 	void OnScreenLog::Draw() {
+		assert(game::window != nullptr);
+
 		if(logFont != nullptr) {
 
 			FitLog();
@@ -101,7 +104,7 @@ namespace bzsf {
 			}
 
 			for(sf::Text& t : entities) {
-				bzsf::game::window->draw(t);
+				game::window->draw(t);
 			}
 		}
 	}

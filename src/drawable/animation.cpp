@@ -13,7 +13,7 @@ namespace bzsf {
 
 
 	Animation::Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat) : repeat(Repeat), texture(t), timePerFrame(TimePerFrame), frameSize(fSize), frameIndex(0), overflow(sf::Time::Zero) {
-		if(t.getSize().x%fSize.x!=0 && t.getSize().y%fSize.y!=0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
+		if(t.getSize().x % fSize.x != 0 || t.getSize().y %fSize.y != 0) { std::cerr << "Animation creation error: sizes are incompatible" << std::endl;}
 		numFrames = t.getSize().x / fSize.x; // Columns
 		numFrames *= t.getSize().y / fSize.y; // * rows
 	}
@@ -42,7 +42,7 @@ namespace bzsf {
 		else {
 			bool updated = false;
 			overflow += timer.restart();
-			while(overflow > timePerFrame) {
+			while(overflow >= timePerFrame) {
 				overflow -= timePerFrame;
 				if(frameIndex < numFrames-1) {
 					frameIndex++;
@@ -59,7 +59,7 @@ namespace bzsf {
 
 
 	sf::IntRect Animation::GetFrameRect() {
-		sf::Uint32 column = frameIndex%(texture.getSize().x / frameSize.x);
+		sf::Uint32 column = frameIndex % (texture.getSize().x / frameSize.x);
 		sf::Uint32 row = sf::Uint32(floor(float(frameIndex)/(texture.getSize().x / frameSize.x)));
 	
 		sf::IntRect pRect(

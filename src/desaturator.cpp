@@ -12,7 +12,7 @@ namespace bzsf {
 			if(done) return pixels; else done=true;
 		}
 		
-		delete pixels;
+		if(pixels != nullptr) delete pixels;
 		pixels = new sf::Uint8[area.x*area.y*4];
 
 		for(sf::Uint16 x = 0; x < area.x; x++) {
@@ -36,7 +36,7 @@ namespace bzsf {
 
 
 
-	Desaturator::Desaturator(const sf::Image& img, sf::Uint16 _duration) : duration(_duration), done(false), pixels(0) {	
+	Desaturator::Desaturator(const sf::Image& img, sf::Uint16 _duration) : duration(_duration), done(false), pixels(nullptr) {	
 		area = img.getSize();
 
 		targetPixels = new sf::Uint8[area.x*area.y];
