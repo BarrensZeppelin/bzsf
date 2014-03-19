@@ -1,4 +1,4 @@
-namespace bzsf {
+namespace bzsflegacy {
 
 	class game {
 	public:

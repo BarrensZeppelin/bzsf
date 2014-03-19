@@ -88,29 +88,37 @@ namespace bzsf {
 			FixAngle();
 			float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*fTime);
 			float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*fTime);
-			force.x = ((force.x <= PI/2 || force.x > (3*PI)/2) ? 0 : PI) + atan(b / a);
+			force.x = ((force.x <= PI / 2 || force.x > (3 * PI) / 2) ? 0 : PI) + atan(b / a);
 			force.y = sqrt(pow(a, 2) + pow(b, 2));
 		}
 
 		if(force.y <= 0) {dead = true; return;}
 
-		entity.setPosition(entity.getPosition().x + cos(force.x)*force.y * fTime, entity.getPosition().y + sin(force.x)*force.y * fTime);
+		entity.move(sf::Vector2f(cos(force.x)*force.y * fTime, sin(force.x)*force.y * fTime));
 	}
 	///////////////////////
 
 
 
 	inline sf::Color SpreadColor(sf::Color c, float spread) {
-		sf::Int16 tR = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
+		sf::Int16 tR = static_cast<sf::Int16>(
+			-(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0)
+		);
 		if(c.r + tR < 0) tR = -c.r; else if(c.r + tR > 255) tR = 255-c.r;
 
-		sf::Int16 tG = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
+		sf::Int16 tG = static_cast<sf::Int16>(
+			-(255 * (spread / 2)) + (floor(255 * spread) != 0 ? rand() % (sf::Uint8)(255 * spread) : 0)
+		);
 		if(c.g + tG < 0) tG = -c.g; else if(c.g + tG > 255) tG = 255-c.g;
 
-		sf::Int16 tB = -(255 * (spread/2)) + (floor(255 * spread) != 0 ? rand()%(sf::Uint8)(255 * spread) : 0);
+		sf::Int16 tB = static_cast<sf::Int16>(
+			-(255 * (spread / 2)) + (floor(255 * spread) != 0 ? rand() % (sf::Uint8)(255 * spread) : 0)
+		);
 		if(c.b + tB < 0) tB = -c.b; else if(c.b + tB > 255) tB = 255-c.b;
 
-		sf::Int16 tA = -(255 * (spread/2))*0.1f + (floor(c.a * spread) != 0 ? rand()%(sf::Uint8)(255 * spread)*0.1f : 0);
+		sf::Int16 tA = static_cast<sf::Int16>(
+			-(255 * (spread / 2))*0.1f + (floor(c.a * spread) != 0 ? rand() % (sf::Uint8)(255 * spread)*0.1f : 0)
+		);
 		if(c.a + tA < 0) tA = -c.a; else if(c.a + tA > 255) tA = 255-c.a;
 
 		return sf::Color(c.r + tR, c.g + tG, c.b + tB, c.a + tA);
@@ -228,7 +236,7 @@ namespace bzsf {
 
 
 
-	void Emitter::Draw() {
+	void Emitter::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		sf::Time mDelta = clock.restart();
 		if(fuel > 0) {
 			sf::Uint32 pToAdd = fuel;
@@ -266,7 +274,7 @@ namespace bzsf {
 			
 			for(Particle& p : particles){
 				p.Update(mDelta);
-				p.draw();
+				p.Draw(window, states);
 			}
 		}
 	}
@@ -297,12 +305,12 @@ namespace bzsf {
 
 
 	// Draw
-	void ParticleSystem::Draw() {
+	void ParticleSystem::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		unownedEmitters.erase(std::remove_if(unownedEmitters.begin(), unownedEmitters.end(), [] (std::unique_ptr<Emitter>& e) {return e->IsDead();}), unownedEmitters.end());
 
 
 		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
-			e->Draw();
+			e->Draw(window, states);
 		}
 	}
 	/////////////////////////

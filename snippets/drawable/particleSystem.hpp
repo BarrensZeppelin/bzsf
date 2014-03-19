@@ -40,6 +40,7 @@ namespace bzsf {
 		friend class Emitter;
 	};
 
+
 	class Emitter {
 	public:
 		enum Cut {SOFT = 1, MEDIUM, HARD};
@@ -111,8 +112,16 @@ namespace bzsf {
 
 		bool IsDead();
 
+		///////////////////////////////////////////////
+		/// A Soft cut will wait for fuel to empty
+		///		and for the last particles to disappear
+		/// A Medium cut will set fuel to 0, but
+		///		waits for every particle to disappear
+		/// A Hard cut removes both fuel and particles
+		///////////////////////////////////////////////
 		void Kill(Cut cut);
-		void Draw();
+
+		void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
 
 		~Emitter();
 
@@ -139,7 +148,7 @@ namespace bzsf {
 		static std::vector<std::unique_ptr<Emitter>>& GetUnownedEmitters();
 		
 
-		static void Draw();
+		static void Draw(sf::RenderTarget& window, sf::RenderStates = sf::RenderStates::Default);
 	};
 
 } //ENDOF NAMESPACE bzsf

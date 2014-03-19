@@ -23,12 +23,17 @@ namespace bzsf {
 		void SetPosition(sf::Vector2f pos);
 		void SetSize(sf::Uint32 size);
 		void SetFont(sf::Font& font);
+
+		////////////////////////////////
+		/// A fade delay of 0 will make the log stay forever
+		/// A fade duration of 0 will make log entries pop instantly after the delay
+		////////////////////////////////
 		void SetFadeTime(sf::Time fadeDelay, sf::Time fadeDuration);
 
 		void Append(const std::string& str);
 		void Clear();
 
-		void Draw();
+		void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
 
 		OnScreenLog();
 		OnScreenLog(sf::Font& font,

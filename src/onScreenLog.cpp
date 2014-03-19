@@ -9,7 +9,7 @@ namespace bzsf {
 			entities[i].setCharacterSize(fSize);
 			entities[i].setColor(logColor);
 
-			entities[i].setPosition(position + sf::Vector2f(0, i * (fSize + rowOffset)));
+			entities[i].setPosition(position + sf::Vector2f(0, i * static_cast<float>(fSize + rowOffset)));
 		}
 	}
 
@@ -81,11 +81,7 @@ namespace bzsf {
 
 	}
 
-
-
-	void OnScreenLog::Draw() {
-		assert(game::window != nullptr);
-
+	void OnScreenLog::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		if(logFont != nullptr) {
 
 			FitLog();
@@ -94,17 +90,17 @@ namespace bzsf {
 				sf::Uint32 u = maxSize - 1 - i;
 				entities[u].setString(log[i].first);
 
-				if(log[i].second.getElapsedTime() > fadeTime.x) {
-					float elapsed = (log[i].second.getElapsedTime().asSeconds() - fadeTime.x.asSeconds()) / fadeTime.y.asSeconds();
+				if(log[i].second.getElapsedTime() > fadeTime.x && fadeTime.x != sf::Time::Zero) {
+					float elapsed = (fadeTime.y != sf::Time::Zero ? (log[i].second.getElapsedTime().asSeconds() - fadeTime.x.asSeconds()) / fadeTime.y.asSeconds() : 1.f);
 					if(elapsed > 1.f) elapsed = 1.f;
 
-					sf::Color c = logColor; c.a = logColor.a - logColor.a * elapsed;
+					sf::Color c = logColor; c.a = static_cast<sf::Uint8>(logColor.a - logColor.a * elapsed);
 					entities[u].setColor(c);
 				} else entities[u].setColor(logColor);
 			}
 
 			for(sf::Text& t : entities) {
-				game::window->draw(t);
+				window.draw(t, states);
 			}
 		}
 	}

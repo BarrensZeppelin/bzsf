@@ -8,9 +8,7 @@ namespace bzsf {
 	sf::Texture&	Drawable::GetTexture()	{return tex;}
 	Drawable::drawType	Drawable::GetDrawType() {return dType;}
 
-	void Drawable::draw() {
-		assert(game::window != nullptr);
-		
+	void Drawable::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		if(dType == animation) {
 			anim->Update();
 			if(anim->GetIndex() != animIndex) {
@@ -19,7 +17,7 @@ namespace bzsf {
 			}
 		}
 
-		if(dType!=none) {game::window->draw(entity);}
+		if(dType != none) { window.draw(entity, states); }
 	}
 
 

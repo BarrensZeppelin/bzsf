@@ -24,6 +24,7 @@
 #include <memory>
 #include <cassert>
 #include <deque>
+#include <functional>
 
 
 // Include the Snippets:
@@ -33,5 +34,7 @@
 #include <BZeps-SFML-Snippets\snippets\drawable.hpp>
 #include <BZeps-SFML-Snippets\snippets\desaturator.hpp>
 #include <BZeps-SFML-Snippets\snippets\onScreenLog.hpp>
+#include <BZeps-SFML-Snippets\snippets\state.hpp>
+#include <BZeps-SFML-Snippets\snippets\stateStack.hpp>
 
 #endif

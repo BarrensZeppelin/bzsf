@@ -11,8 +11,8 @@ namespace bzsf {
 
 		sf::Sprite entity;
 		
-		bzsf::tsTile * texTile;
-		bzsf::Animation * anim;
+		bzsf::tsTile* texTile;
+		bzsf::Animation* anim;
 		sf::Texture tex;
 		int animIndex;
 
@@ -24,7 +24,7 @@ namespace bzsf {
 		drawType GetDrawType();
 
 
-		virtual void draw();
+		virtual void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
 		
 
 		void SetAnimation(Animation* a);

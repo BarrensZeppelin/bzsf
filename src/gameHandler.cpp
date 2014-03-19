@@ -1,6 +1,6 @@
 #include <SFML_Snips.hpp>
 
-namespace bzsf {
+namespace bzsflegacy {
 	
 	// game ///
 	sf::Uint16 game::currentState = 0;

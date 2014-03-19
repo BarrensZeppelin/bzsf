@@ -7,7 +7,7 @@ namespace bzsf {
 	/*template <typename T>
 	class ValueLimiter {
 	private:
-		T * value;
+		T value;
 
 		sf::Vector2<T>  limits;
  
@@ -18,7 +18,7 @@ namespace bzsf {
 		const T GetValue() {return *value;}
 
 		ValueLimiter(T& val, sf::Vector2<T> limit, Type limType) : type(limType) {
-			value = &val;
+			value = val;
 
 			if(limit.y < limit.x) swap(limit.x, limit.y);
 			limits = limit;
