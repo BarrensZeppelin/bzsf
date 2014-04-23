@@ -3,7 +3,7 @@
 namespace bzsf {
 
 	template<typename ID, typename Context>
-	State<ID, Context>::State(StateStack<ID, Context>& stack, Context _context) : stateStack(&stack), context(context) {}
+	State<ID, Context>::State(StateStack<ID, Context>& stack, Context _context) : stateStack(&stack), context(_context) {}
 
 	template<typename ID, typename Context>
 	State<ID, Context>::~State() {}

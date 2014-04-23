@@ -4,6 +4,14 @@ namespace bzsf {
 	float RADTODEG(float rad);
 
 
+	// Helper functions
+	float Length(sf::Vector2f vector);
+
+	float SqrLength(sf::Vector2f vector);
+
+	sf::Vector2f UnitVector(sf::Vector2f vector);
+
+
 	/*template <typename T>
 	class ValueLimiter {
 	private:

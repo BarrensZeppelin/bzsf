@@ -97,8 +97,9 @@ namespace bzsf {
 	template<typename ID, typename Context>
 	template<typename StateType>
 	void StateStack<ID, Context>::RegisterState(ID stateID) {
-		factory[stateID] = [this] () {
-			return typename State<ID, Context>::Ptr(new StateType(*this, context));
+		factory[stateID] = [this] () -> typename State<ID, Context>::Ptr {
+			State<ID, Context>::Ptr ptr(new StateType(*this, context));
+			return std::move(ptr);
 		};
 	}
 

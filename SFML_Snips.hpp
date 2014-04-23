@@ -36,5 +36,6 @@
 #include <BZeps-SFML-Snippets\snippets\onScreenLog.hpp>
 #include <BZeps-SFML-Snippets\snippets\state.hpp>
 #include <BZeps-SFML-Snippets\snippets\stateStack.hpp>
+#include <BZeps-SFML-Snippets\snippets\performanceDisplay.hpp>
 
 #endif
