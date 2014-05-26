@@ -12,26 +12,9 @@ namespace bzsf {
 		drawable->SetAnimation(animCopy.get());
 	}
 
-	/*Particle::Particle(const Particle& p) : animCopy(nullptr) {
-		if(p.animCopy != nullptr)
-			CopyAnimation(p.animCopy.get());
-		else if(p.GetTile() != nullptr)
-			SetTile(static_cast<const Drawable *>(&p)->GetTile());
-		
-
-		Initialise((p.force.x != 0 ? atan(p.force.y / p.force.x) : 0),
-				   Length(force),
-				   Length(p.friction),
-				   p.gravity,
-				   p.life,
-				   p.entity.getPosition(),
-				   p.entity.getScale().x,
-				   p.entity.getColor());
-	}*/
-
-	void Particle::FixAngle() {
-		while(force.x < 0) force.x += 2 * PI;
-		while(force.x >= 2 * PI) force.x -= 2 * PI;
+	void Particle::FixAngle(float& a) {
+		while(a < 0) a += 2 * PI;
+		while(a >= 2 * PI) a -= 2 * PI;
 	}
 
 
@@ -41,16 +24,16 @@ namespace bzsf {
 
 	void Particle::Initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col) {
 		dead = false;
-		force = sf::Vector2f(cos(_a)*_v, sin(_a)*_v);
+		force = sf::Vector2f(cos(_a) * _v, sin(_a) * _v);
 		friction = -UnitVector(force) * fric;
-		gravity = grav;
+		gravity = sf::Vector2f(cos(grav.x) * grav.y, sin(grav.x) * grav.y);
 		startAlpha = col.a;
 		life = lifeTime;
 		position = pos;
 		color = col;
 
 
-		if(grav.y == 0 && fric != 0) if(_v / fric < lifeTime.asSeconds()) life = sf::seconds(_v / fric);
+		if(fric != 0) if(_v / fric < lifeTime.asSeconds()) life = sf::seconds(_v / fric);
 
 		if(drawable) {
 			drawable->GetEntity().setColor(col);
@@ -89,22 +72,18 @@ namespace bzsf {
 
 		color.a = sf::Uint8(startAlpha - startAlpha * elapsed);
 
-		force -= friction * mDelta.asSeconds();
+		force -= friction * mDelta.asSeconds() - gravity * mDelta.asSeconds();
 
 		position += force * mDelta.asSeconds();
 
 		if(drawable) {
 			drawable->GetEntity().setPosition(position);
 			drawable->GetEntity().setColor(color);
-		}
 
-		/*if(gravity.y != 0) {
-			FixAngle();
-			float a = (cos(force.x)*force.y + cos(gravity.x)*gravity.y*fTime);
-			float b = (sin(force.x)*force.y + sin(gravity.x)*gravity.y*fTime);
-			force.x = ((force.x <= PI / 2 || force.x > (3 * PI) / 2) ? 0 : PI) + atan(b / a);
-			force.y = sqrt(pow(a, 2) + pow(b, 2));
-		}*/
+			drawable->GetEntity().setRotation(RADTODEG(
+				(gravity.x != 0 ? atan(gravity.y / gravity.x) : 0)
+				));
+		}
 	}
 	///////////////////////
 

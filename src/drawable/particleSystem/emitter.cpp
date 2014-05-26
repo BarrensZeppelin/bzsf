@@ -4,22 +4,22 @@ namespace bzsf {
 
 	inline sf::Color SpreadColor(sf::Color c, float spread) {
 		sf::Int16 tR = static_cast<sf::Int16>(
-			-(255 * (spread / 2)) + (floor(255 * spread) != 0 ? rand() % (sf::Uint8)(255 * spread) : 0)
+			floor(randf(-255.f, 255.f) * spread)
 			);
 		if(c.r + tR < 0) tR = -c.r; else if(c.r + tR > 255) tR = 255 - c.r;
 
 		sf::Int16 tG = static_cast<sf::Int16>(
-			-(255 * (spread / 2)) + (floor(255 * spread) != 0 ? rand() % (sf::Uint8)(255 * spread) : 0)
+			floor(randf(-255.f, 255.f) * spread)
 			);
 		if(c.g + tG < 0) tG = -c.g; else if(c.g + tG > 255) tG = 255 - c.g;
 
 		sf::Int16 tB = static_cast<sf::Int16>(
-			-(255 * (spread / 2)) + (floor(255 * spread) != 0 ? rand() % (sf::Uint8)(255 * spread) : 0)
+			floor(randf(-255.f, 255.f) * spread)
 			);
 		if(c.b + tB < 0) tB = -c.b; else if(c.b + tB > 255) tB = 255 - c.b;
 
 		sf::Int16 tA = static_cast<sf::Int16>(
-			-(255 * (spread / 2))*0.1f + (floor(c.a * spread) != 0 ? rand() % (sf::Uint8)(255 * spread)*0.1f : 0)
+			floor(randf(-255.f, 255.f) * spread)
 			);
 		if(c.a + tA < 0) tA = -c.a; else if(c.a + tA > 255) tA = 255 - c.a;
 
@@ -141,8 +141,8 @@ namespace bzsf {
 	}
 
 
-	void Emitter::SetAngle(float a, float spread) { angle = a; angleSpread = spread; }
-	void Emitter::SetVelocity(float v, float spread) { velocity = v; velocitySpread = spread; }
+	void Emitter::SetAngle(float a, float spread) { angle = a; angleSpread = spread / 2.f; }
+	void Emitter::SetVelocity(float v, float spread) { velocity = v; velocitySpread = (velocity * spread) / 2.f; }
 	void Emitter::SetColor(sf::Color c, float spread, bool redraw) {
 		color = c;
 		colorSpread = spread;
@@ -157,7 +157,7 @@ namespace bzsf {
 	}
 	void Emitter::SetScale(float s, float spread, bool redraw) {
 		scale = s;
-		scaleSpread = spread;
+		scaleSpread = (scale * spread) / 2.f;
 
 		/*if(redraw) {
 			for(ParticlePtr& p : particles) {
@@ -166,7 +166,7 @@ namespace bzsf {
 			}
 		}*/
 	}
-	void Emitter::SetLifeTime(sf::Time l, float spread) { life = l; lifeSpread = spread; }
+	void Emitter::SetLifeTime(sf::Time l, float spread) { life = l; lifeSpread = (l.asSeconds() * spread) / 2.f; }
 	void Emitter::SetOrigin(sf::Vector2f o) { origin = o; }
 	void Emitter::SetParticlesPerSecond(sf::Uint32 p) { pps = p; }
 	void Emitter::SetFriction(float f) { friction = f; }
@@ -181,20 +181,21 @@ namespace bzsf {
 
 	void Emitter::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		sf::Time mDelta = clock.restart();
+		
 		if(fuel > 0) {
 			sf::Uint32 pToAdd = fuel;
 			if(pps > 0) {
-				pToAdd = 0;
 				ppsOverflow += mDelta.asSeconds() * (float)pps;
-				while(ppsOverflow >= 1) { pToAdd++; ppsOverflow--; }
+				pToAdd = floor(ppsOverflow);
+				ppsOverflow -= floor(ppsOverflow);
 				if(pToAdd > fuel) pToAdd = fuel;
 			}
 
-			for(sf::Uint32 i = 0; i<pToAdd; i++) {
-				float a = angle - (angleSpread / 2) + float(rand() % (sf::Uint32)(angleSpread * 1000)) / 1000;
-				float v = velocity - (velocity * (velocitySpread / 2)) + float(rand() % (sf::Uint32)(velocity * velocitySpread * 1000)) / 1000;
-				float l = life.asSeconds() - (life.asSeconds() * lifeSpread / 2) + float(rand() % (sf::Uint32)(life.asSeconds() * lifeSpread * 1000)) / 1000;
-				float s = scale - (scale * scaleSpread / 2) + float(rand() % (sf::Uint32)(scale * scaleSpread * 1000)) / 1000;
+			for(sf::Uint32 i = 0; i < pToAdd; i++) {
+				float a = angle				+ randf(-angleSpread, angleSpread);
+				float v = velocity			+ randf(-velocitySpread, velocitySpread);
+				float l = life.asSeconds()	+ randf(-lifeSpread, lifeSpread);
+				float s = scale				+ randf(-scaleSpread, scaleSpread);;
 
 				if(tileset != nullptr)
 					particles.push_back(ParticlePtr(new Particle(a, v, friction, gravity, sf::seconds(l), origin, s, SpreadColor(color, colorSpread), tileset)));// Add New particle

@@ -12,6 +12,11 @@ namespace bzsf {
 	sf::Vector2f UnitVector(sf::Vector2f vector);
 
 
+	// Float Randomization
+	float randf();
+	float randf(float highlimit);
+	float randf(float lowlimit, float highlimit);
+
 	/*template <typename T>
 	class ValueLimiter {
 	private:

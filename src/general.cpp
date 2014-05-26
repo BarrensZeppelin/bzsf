@@ -19,6 +19,20 @@ namespace bzsf {
 		return vector / Length(vector);
 	}
 
+
+	// Float Randomisation
+	float randf() {
+		return static_cast<float>(rand()) / static_cast<float>(RAND_MAX);
+	}
+
+	float randf(float highlimit) {
+		return static_cast<float>(rand()) / static_cast<float>(RAND_MAX / highlimit);
+	}
+
+	float randf(float lowlimit, float highlimit) {
+		return lowlimit + static_cast<float>(rand()) / static_cast<float>(RAND_MAX / (highlimit - lowlimit));
+	}
+
 	/*template <typename T>
 	class ValueLimiter*/
 

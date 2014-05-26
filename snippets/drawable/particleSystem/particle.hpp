@@ -27,7 +27,7 @@ namespace bzsf {
 		void SetTileset(Tileset * ts);
 		void CopyAnimation(Animation* a);
 
-		void FixAngle();
+		void FixAngle(float& a);
 
 		void Initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col);
 

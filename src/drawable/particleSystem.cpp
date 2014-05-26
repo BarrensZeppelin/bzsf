@@ -28,7 +28,6 @@ namespace bzsf {
 	void ParticleSystem::Draw(sf::RenderTarget& window, sf::RenderStates states) {
 		unownedEmitters.erase(std::remove_if(unownedEmitters.begin(), unownedEmitters.end(), [] (std::unique_ptr<Emitter>& e) {return e->IsDead();}), unownedEmitters.end());
 
-
 		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
 			e->Draw(window, states);
 		}
