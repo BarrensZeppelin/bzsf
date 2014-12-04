@@ -16,10 +16,10 @@ namespace bzsf {
 			-----
 			3 | 4
 		*/
-		nodes[0] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top), halfSize), level + 1);
-		nodes[1] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top), halfSize), level + 1);
-		nodes[2] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top + halfSize.y), halfSize), level + 1);
-		nodes[3] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top + halfSize.y), halfSize), level + 1);
+		nodes[0] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
+		nodes[1] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
+		nodes[2] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top + halfSize.y), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
+		nodes[3] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top + halfSize.y), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
 	
 		if(type == PRECISE) { // Divide current objects into subnodes
 			for(auto o : objects)
@@ -40,13 +40,13 @@ namespace bzsf {
 
 
 	template<typename ObjectT>
-	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel, sf::Uint16 maxnodes, Type type) :
+	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel, sf::Uint16 maxobjects, Type type) :
 	bounds(bounds)
 	, objects()
 	, nodes()
 	, level(level)
 	, MAXLEVEL(maxlevel)
-	, MAXNODES(maxnodes)
+	, MAXNODES(maxobjects)
 	, type(type) {
 		for(QuadTree* q : nodes)
 			q = nullptr;
@@ -93,10 +93,9 @@ namespace bzsf {
 			return _set;
 		
 		
-		if(level == MAXLEVEL || type == FAST || !isSplit()) {
+		if(!isSplit() || type == FAST)
 			for(auto p : objects)
 				_set.insert(p.first);
-		}
 		
 		if(isSplit()) {
 			for(QuadTree* q : nodes) {

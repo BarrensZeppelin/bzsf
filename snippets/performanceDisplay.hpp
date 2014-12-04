@@ -49,7 +49,7 @@ namespace bzsf {
 	public:
 		PerformanceDisplay(sf::Font* Font = nullptr, 
 			sf::Color c = sf::Color(),
-			sf::Vector2f pos = sf::Vector2f(100, 10),
+			sf::Vector2f pos = sf::Vector2f(100 , 10),
 			sf::Uint32 textSize = 12u, 
 			sf::Uint32 offset = 2u);
 

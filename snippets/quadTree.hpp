@@ -28,7 +28,16 @@ namespace bzsf {
 		inline bool intersects(const sf::FloatRect& rect);
 
 	public:
-		QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel = 5, sf::Uint16 maxnodes = 4, Type type = PRECISE);
+		/**
+			Constructs a new QuadTree.
+
+			@param bounds The QuadTree's bounds
+			@param level Used internally, pass 0 when constructing a new QuadTree
+			@param maxlevel The maximum amount of times the QuadTree will split. (Preferably use a value that makes {bounds.size() / maxlevel > average object size})
+			@param maxobjects Amount of objects before the QuadTree splits
+			@param type FAST makes the QuadTree a lot faster than PRECISE, but less precise.. If you're having perfomance issues, but collision checking isn't expensive, try using FAST.
+		*/
+		QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel, sf::Uint16 maxobjects, Type type = PRECISE);
 		virtual ~QuadTree();
 
 		void clear();
