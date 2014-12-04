@@ -28,16 +28,4 @@ namespace bzsf {
 	Context State<ID, Context>::GetContext() {
 		return context;
 	}
-
-
-
-
-	template<typename ID, typename Context>
-	void State<ID, Context>::Draw(sf::RenderTarget& window, sf::RenderStates states) {}
-
-	template<typename ID, typename Context>
-	bool State<ID, Context>::Update(sf::Time& dt) { return true; }
-
-	template<typename ID, typename Context>
-	bool State<ID, Context>::HandleEvent(const sf::Event& event) { return true; }
 }

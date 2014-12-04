@@ -1,3 +1,5 @@
+#ifndef BZSF_TILESET_H
+#define BZSF_TILESET_H
 
 namespace bzsf {
 
@@ -22,3 +24,5 @@ namespace bzsf {
 
 
 } //ENDOF NAMESPACE bzsf
+
+#endif

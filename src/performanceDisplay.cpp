@@ -12,7 +12,7 @@ namespace bzsf {
 			}
 			average /= values.size();
 
-			std::stringstream ss; ss << average;
+			std::stringstream ss; ss << average << postfix;
 			avgText.setString(ss.str());
 
 			values.clear();
@@ -22,9 +22,10 @@ namespace bzsf {
 	}
 
 
-	PElement::PElement(sf::Font& font, std::string elementText, sf::Time updateInterval, sf::Uint32 textSize)
+	PElement::PElement(sf::Font& font, std::string elementText, std::string postfix, sf::Time updateInterval, sf::Uint32 textSize)
 		: elementText(elementText, font, textSize)
-		, avgText("0", font, textSize)
+		, postfix(postfix)
+		, avgText(std::string("0") + postfix, font, textSize)
 		, overflow(sf::Time::Zero)
 		, updateInterval(updateInterval)
 		, average(0.f) {
@@ -53,6 +54,11 @@ namespace bzsf {
 		this->avgText.setOrigin(sf::Vector2f(0.f, floor(lbounds2.height / 2.f)));
 	}
 
+	void PElement::SetColor(sf::Color c) {
+		elementText.setColor(c);
+		avgText.setColor(c);
+	}
+
 
 	void PElement::Draw(sf::RenderTarget& window, sf::Vector2f pos1, sf::Vector2f pos2, sf::RenderStates states) {
 		Update();
@@ -67,15 +73,17 @@ namespace bzsf {
 
 
 
-	PerformanceDisplay::PerformanceDisplay(sf::Font* Font, sf::Vector2f pos, sf::Uint32 textSize, sf::Uint32 offset)
-		: font(Font), pos(pos), textSize(textSize), offset(offset) {}
+	PerformanceDisplay::PerformanceDisplay(sf::Font* Font, sf::Color c, sf::Vector2f pos, sf::Uint32 textSize, sf::Uint32 offset)
+		: font(Font), color(c), pos(pos), textSize(textSize), offset(offset) {}
 
 
-	void PerformanceDisplay::RegisterElement(std::string ID, std::string elementText, sf::Time updateInterval) {
+	void PerformanceDisplay::RegisterElement(std::string ID, std::string elementText, sf::Time updateInterval, std::string postfix) {
 		assert(font != nullptr);
 
-		auto iter = elements.insert(std::make_pair(ID, PElement(*font, elementText, updateInterval, textSize)));
+		auto iter = elements.insert(std::make_pair(ID, PElement(*font, elementText, postfix, updateInterval, textSize)));
 		assert(iter.second);
+
+		iter.first->second.SetColor(color);
 	}
 
 	void PerformanceDisplay::PushValue(std::string ID, float value) {
@@ -90,14 +98,19 @@ namespace bzsf {
 
 
 	void PerformanceDisplay::SetFont(sf::Font& font) {
-
 		this->font = &font;
 
-		for(auto iter = elements.begin(); iter != elements.end(); iter++) {
-			PElement& e = iter->second;
-			e.SetFont(font);
+		for(auto& el : elements) {
+			el.second.SetFont(font);
 		}
 
+	}
+
+	void PerformanceDisplay::SetColor(sf::Color c) {
+		color = c;
+
+		for(auto& el : elements)
+			el.second.SetColor(c);
 	}
 
 

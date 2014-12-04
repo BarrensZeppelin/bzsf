@@ -16,7 +16,9 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <array>
 #include <vector>
+#include <set>
 #include <map>
 #include <math.h>
 #include <time.h>
@@ -37,5 +39,6 @@
 #include <BZeps-SFML-Snippets\snippets\state.hpp>
 #include <BZeps-SFML-Snippets\snippets\stateStack.hpp>
 #include <BZeps-SFML-Snippets\snippets\performanceDisplay.hpp>
+#include <BZeps-SFML-Snippets\snippets\quadTree.hpp>
 
 #endif

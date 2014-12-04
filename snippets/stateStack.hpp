@@ -21,11 +21,11 @@ namespace bzsf {
 			ID stateID;
 		};
 
-		std::vector<typename State<ID, Context>::Ptr>								stack;
-		std::vector<PendingChange>													pendingChanges;
+		std::vector<typename State<ID, Context>::Ptr>						stack;
+		std::vector<PendingChange>											pendingChanges;
 
-		Context																		context;
-		std::map<ID, std::function<typename State<ID, Context>::Ptr()>>				factory;
+		Context																context;
+		std::map<ID, std::function<typename State<ID, Context>::Ptr()>>		factory;
 
 
 		typename State<ID, Context>::Ptr CreateState(ID stateID);

@@ -25,9 +25,9 @@ namespace bzsf {
 		State(StateStack<ID, Context>& stack, Context _context);
 		virtual ~State();
 
-		virtual void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
-		virtual bool Update(sf::Time& dt);
-		virtual bool HandleEvent(const sf::Event& event);
+		virtual void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) = 0;
+		virtual bool Update(sf::Time& dt) = 0;
+		virtual bool HandleEvent(const sf::Event& event) = 0;
 	};
 
 }

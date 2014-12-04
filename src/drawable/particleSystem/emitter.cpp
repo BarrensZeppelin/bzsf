@@ -186,7 +186,7 @@ namespace bzsf {
 			sf::Uint32 pToAdd = fuel;
 			if(pps > 0) {
 				ppsOverflow += mDelta.asSeconds() * (float)pps;
-				pToAdd = floor(ppsOverflow);
+				pToAdd = static_cast<sf::Uint32>(floor(ppsOverflow));
 				ppsOverflow -= floor(ppsOverflow);
 				if(pToAdd > fuel) pToAdd = fuel;
 			}
