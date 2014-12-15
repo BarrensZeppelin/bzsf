@@ -1,99 +1,92 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
-	
-	const tsTile *	Drawable::GetTile()	const{return texTile;}
-	sf::Sprite&		Drawable::GetEntity()	{return entity;}
-	Animation *		Drawable::GetAnimation(){return anim;}
-	sf::Texture&	Drawable::GetTexture()	{return tex;}
-	Drawable::drawType	Drawable::GetDrawType() {return dType;}
+	Drawable::Drawable() {}
 
-	void Drawable::Draw(sf::RenderTarget& window, sf::RenderStates states) {
-		if(dType == animation) {
-			anim->Update();
-			if(anim->GetIndex() != animIndex) {
-				animIndex = anim->GetIndex();
-				entity.setTextureRect(anim->GetFrameRect());
+	Drawable::Drawable(const bzsf::Animation& animation) {
+		init();
+		setAnimation(animation);
+	}
+
+	Drawable::Drawable(const sf::Texture& texture) {
+		init();
+		setTexture(texture);
+	}
+
+	Drawable::Drawable(tsTile* tile) {
+		init();
+		setTile(tile);
+	}
+
+
+	void Drawable::init() {
+		texTile = nullptr;
+		animIndex = 0;
+		dType = NONE;
+	}
+
+	void Drawable::draw(sf::RenderTarget& window, sf::RenderStates states) const {
+		states.transform *= getTransform();
+		
+		if(dType == ANIMATION) {
+			anim->update();
+			if(anim->getIndex() != animIndex) {
+				animIndex = anim->getIndex();
+				sprite.setTextureRect(anim->getFrameRect());
 			}
 		}
 
-		if(dType != none) { window.draw(entity, states); }
+		if(dType != NONE) { window.draw(sprite, states); }
 	}
 
 
-	void Drawable::SetAnimation(bzsf::Animation* a) {
-		anim = a;
-		entity.setTexture(a->GetTexture());
-		entity.setTextureRect(a->GetFrameRect());
 
-		dType = animation;
-	}
-
-
-	void Drawable::SetTexture(sf::Texture& Tex) {
-		tex = Tex;
-		
-		float xPos = entity.getPosition().x;
-		float yPos = entity.getPosition().y;
-
-		entity.setTexture(tex);
-		
-		entity.setPosition(xPos, yPos);
-		
-		dType = texture;
-	}
-
-
-	void Drawable::SetTile(const bzsf::tsTile * tl) {
-		float xPos = entity.getPosition().x;
-		float yPos = entity.getPosition().y;
-		
-		entity.setTexture(*tl->texture);
-		entity.setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
-
-		entity.setPosition(xPos, yPos);
-
-		texTile = const_cast<bzsf::tsTile*>(tl);
-
-		dType = tile;
-	}
-
+	const tsTile *	Drawable::getTile()	const{return texTile;}
+	Animation&		Drawable::getAnimation() {return *anim;}
+	const sf::Texture&	Drawable::getTexture() {return *tex;}
 	
-	void Drawable::Init() {
-		texTile = nullptr;
-		animIndex = 0;
-		dType = none;
-		entity = sf::Sprite();
-		tex = sf::Texture();
-		anim = nullptr;
+	sf::FloatRect Drawable::getLocalBounds() const {
+		return sprite.getLocalBounds();
+	}
+
+	sf::FloatRect Drawable::getGlobalBounds() const {
+		return sprite.getGlobalBounds();
+	}
+
+	const sf::Color& Drawable::getColor() const {
+		return sprite.getColor();
 	}
 
 
-	Drawable::Drawable() {
-		Init();
+	void Drawable::setColor(const sf::Color& color) {
+		sprite.setColor(color);
 	}
 
-	Drawable::Drawable(bzsf::Animation* animation) {
-		Init();
-		SetAnimation(animation);
+
+	void Drawable::setAnimation(const bzsf::Animation& a) {
+		anim = const_cast<Animation*>(&a);
+		sprite.setTexture(a.getTexture());
+		sprite.setTextureRect(a.getFrameRect());
+
+		dType = ANIMATION;
 	}
 
-	Drawable::Drawable(std::string filename) {
-		Init();
-		tex.loadFromFile(filename);
-		entity.setTexture(tex);
-		dType = texture;
+
+	void Drawable::setTexture(const sf::Texture& Tex) {
+		tex = &Tex;
+
+		sprite.setTexture(*tex);
+		
+		dType = TEXTURE;
 	}
 
-	Drawable::Drawable(sf::Texture& texture) {
-		Init();
-		SetTexture(texture);
-	}
 
-	Drawable::Drawable(tsTile * tile) {
-		Init();
-		SetTile(tile);
-	}
+	void Drawable::setTile(const bzsf::tsTile * tl) {
+		texTile = const_cast<bzsf::tsTile*>(tl); // WOW - MUCH HACK
+		
+		sprite.setTexture(*tl->texture);
+		sprite.setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
 
-	Drawable::~Drawable() {}
+		dType = TILE;
+	}
 }

@@ -6,7 +6,7 @@ namespace bzsf {
 	class StateStack;
 
 	template<typename ID, typename Context>
-	class State {
+	class State : public sf::Drawable {
 	public:
 		typedef std::unique_ptr<State> Ptr;
 
@@ -14,24 +14,26 @@ namespace bzsf {
 		typename StateStack<ID, Context>* stateStack;
 		Context context;
 
-	protected:
-		void RequestStackPush(ID stateID);
-		void RequestStackPop();
-		void RequestStateClear();
+	private:
+		virtual void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const = 0;
 
-		Context GetContext();
+	protected:
+		void requestStackPush(ID stateID);
+		void requestStackPop();
+		void requestStackClear();
+
+		Context getContext() const;
 
 	public:
-		State(StateStack<ID, Context>& stack, Context _context);
+		State(StateStack<ID, Context>& stack, Context context);
 		virtual ~State();
 
-		virtual void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) = 0;
-		virtual bool Update(sf::Time& dt) = 0;
-		virtual bool HandleEvent(const sf::Event& event) = 0;
+		virtual bool update(sf::Time dt) = 0;
+		virtual bool handleEvent(const sf::Event& event) = 0;
 	};
 
 }
 
 
 // Include implementaion
-#include <BZeps-SFML-Snippets\snippets\state.inl>
+#include <bzsf\snippets\state.inl>

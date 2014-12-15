@@ -7,16 +7,16 @@ namespace bzsf {
 	float RADTODEG(float rad) {return ((180.f * rad) / PI);}
 
 	// Helper functions
-	float Length(sf::Vector2f vector) {
+	float length(sf::Vector2f vector) {
 		return sqrt(vector.x * vector.x + vector.y * vector.y);
 	}
 
-	float SqrLength(sf::Vector2f vector) {
+	float sqrLength(sf::Vector2f vector) {
 		return vector.x * vector.x + vector.y * vector.y;
 	}
 
-	sf::Vector2f UnitVector(sf::Vector2f vector) {
-		return vector / Length(vector);
+	sf::Vector2f unitVector(sf::Vector2f vector) {
+		return vector / length(vector);
 	}
 
 

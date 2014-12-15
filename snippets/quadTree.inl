@@ -16,15 +16,15 @@ namespace bzsf {
 			-----
 			3 | 4
 		*/
-		nodes[0] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
-		nodes[1] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
-		nodes[2] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top + halfSize.y), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
-		nodes[3] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top + halfSize.y), halfSize), level + 1, MAXLEVEL, MAXNODES, type);
+		nodes[0] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top), halfSize),				type, MAXLEVEL, MAXNODES, level + 1);
+		nodes[1] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top), halfSize),							type, MAXLEVEL, MAXNODES, level + 1);
+		nodes[2] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left, bounds.top + halfSize.y), halfSize),				type, MAXLEVEL, MAXNODES, level + 1);
+		nodes[3] = new QuadTree<ObjectT>(sf::FloatRect(sf::Vector2f(bounds.left + halfSize.x, bounds.top + halfSize.y), halfSize),	type, MAXLEVEL, MAXNODES, level + 1);
 	
 		if(type == PRECISE) { // Divide current objects into subnodes
 			for(auto o : objects)
 				for(QuadTree* q : nodes)
-					q->addObject(o.first, o.second);
+					q->addObject(o, rects[o]);
 
 			objects.clear();
 		} // else don't care and proceed to add next objects to subnodes -> creates less accurate collisions, but
@@ -40,8 +40,9 @@ namespace bzsf {
 
 
 	template<typename ObjectT>
-	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel, sf::Uint16 maxobjects, Type type) :
-	bounds(bounds)
+	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, Type type, sf::Uint16 maxlevel, sf::Uint16 maxobjects, sf::Uint16 level) :
+		bounds(bounds)
+	, rects()
 	, objects()
 	, nodes()
 	, level(level)
@@ -66,15 +67,17 @@ namespace bzsf {
 
 		nodes = std::array<QuadTree<ObjectT>*, 4>(); // Reinit array to fix nullptr bug
 		objects.clear();
+		rects.clear();
 	}
 
 
 	template<typename ObjectT>	
 	void QuadTree<ObjectT>::addObject(ObjectT* obj, const sf::FloatRect& rect) {
 		if(intersects(rect)) {
-			if(level == MAXLEVEL || ((!isSplit()) && objects.size() < MAXNODES))
-				objects.push_back(std::pair<ObjectT*, sf::FloatRect>(obj, rect));
-			else { // Direct object into subnodes
+			if(level == MAXLEVEL || ((!isSplit()) && objects.size() < MAXNODES)) {
+				rects.insert(std::make_pair(obj, rect));
+				objects.push_back(obj);
+			} else { // Direct object into subnodes
 				if(!isSplit())
 					split();
 
@@ -94,8 +97,7 @@ namespace bzsf {
 		
 		
 		if(!isSplit() || type == FAST)
-			for(auto p : objects)
-				_set.insert(p.first);
+			_set.insert(objects.begin(), objects.end());
 		
 		if(isSplit()) {
 			for(QuadTree* q : nodes) {

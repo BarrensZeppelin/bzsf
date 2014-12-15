@@ -17,7 +17,8 @@ namespace bzsf {
 
 		sf::Uint16 level;
 		sf::FloatRect bounds;
-		std::vector<std::pair<ObjectT*, sf::FloatRect>> objects;
+		std::unordered_map<ObjectT*, const sf::FloatRect> rects;
+		std::vector<ObjectT*> objects;
 		std::array<QuadTree*, 4> nodes;
 
 	protected:
@@ -32,12 +33,12 @@ namespace bzsf {
 			Constructs a new QuadTree.
 
 			@param bounds The QuadTree's bounds
-			@param level Used internally, pass 0 when constructing a new QuadTree
+			@param type FAST makes the QuadTree a lot faster than PRECISE, but less precise.. If you're having perfomance issues, but collision checking isn't expensive, try using FAST.
 			@param maxlevel The maximum amount of times the QuadTree will split. (Preferably use a value that makes {bounds.size() / maxlevel > average object size})
 			@param maxobjects Amount of objects before the QuadTree splits
-			@param type FAST makes the QuadTree a lot faster than PRECISE, but less precise.. If you're having perfomance issues, but collision checking isn't expensive, try using FAST.
+			@param level Used internally, pass 0 when constructing a new QuadTree
 		*/
-		QuadTree(sf::FloatRect bounds, sf::Uint16 level, sf::Uint16 maxlevel, sf::Uint16 maxobjects, Type type = PRECISE);
+		QuadTree(sf::FloatRect bounds, Type type = Type::PRECISE, sf::Uint16 maxlevel = 6, sf::Uint16 maxobjects = 4, sf::Uint16 level = 0);
 		virtual ~QuadTree();
 
 		void clear();

@@ -2,8 +2,6 @@ namespace bzsf {
 	class Drawable;
 
 	class Animation {
-		friend Drawable;
-
 	private:
 		sf::Vector2u frameSize;
 		
@@ -18,27 +16,46 @@ namespace bzsf {
 		sf::Clock timer;
 
 		sf::Texture texture;
+	
+	protected:
+		bool update();
 
 	public:
-		sf::Vector2u GetFrameSize();
-		sf::Uint32 GetIndex();
-		sf::Uint32 GetFrameCount();
-		sf::Time GetTimePerFrame();
-		bool IsRepeating();
-		sf::Texture& GetTexture();
+		sf::Vector2u getFrameSize() const;
+		sf::Uint32 getIndex() const;
+		sf::Uint32 getFrameCount() const;
+		sf::Time getTimePerFrame() const;
+		bool isRepeating() const;
+		const sf::Texture& getTexture() const;
 
-
-		sf::IntRect GetFrameRect();
+		const sf::IntRect getFrameRect() const;
 		
 
-		void SetTimePerFrame(sf::Time s);
-		
-		
+		void setRepeating(bool repeat);
+		void setTimePerFrame(sf::Time s);
+
+		///////////////////////////////////////////////////
+		/// \brief sets the frame index of the Animation
+		///
+		/// If you would want to manually set the frame of the animation,
+		/// 	you can do that with this function.
+		/// Simply call it with the index of the frame and the
+		/// 	drawable affected.
+		/// drawable.getAnimation()->setFrame('index', drawable)
+		///
+		/// \param index The index you want to change to
+		/// \param entity The drawable you want the change to affect
+		/// \param resetOverflow set the frame time overflow to zero when changing
+		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
+		///////////////////////////////////////////////////
+		void setFrame(sf::Uint32 index, bool resetOverflow = true, bool speedToZero = false);
+
+
 		/////////////////////////////////////////////////
 		/// \brief Create a new Animation from a texture
 		///
 		/// After you have created the animation, attach it to to a drawable:
-		///		drawable.SetAnimation(&animation);
+		///		drawable.setAnimation(&animation);
 		/// Multiple drawables can use the same animation, but
 		///		they will always be on the same frame and can't have different speeds.
 		///
@@ -47,17 +64,16 @@ namespace bzsf {
 		/// \param TimePerFrame The time between each framechange
 		/// \param Repeat Default: true. Repeat animation after it has ended?
 		///
-		/// \see Drawable::SetAnimation
-		///
+		/// \see Drawable::setAnimation
 		//////////////////////////////////////////////////
-		Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
+		Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time timePerFrame, bool repeat = true);
 
 
 		/////////////////////////////////////////////////
 		/// \brief Create a new Animation from a texture
 		///
 		/// After you have created the animation, attach it to to a drawable:
-		///		drawable.SetAnimation(&animation);
+		///		drawable.setAnimation(&animation);
 		/// Multiple drawables can use the same animation, but
 		///		they will always be on the same frame and can't have different speeds.
 		///
@@ -67,32 +83,13 @@ namespace bzsf {
 		/// \param TimePerFrame The time between each framechange
 		/// \param Repeat Default: true. Repeat animation after it has ended?
 		///
-		/// \see Drawable::SetAnimation
-		///
+		/// \see Drawable::setAnimation
 		//////////////////////////////////////////////////
-		Animation(sf::Uint16 columns, sf::Uint16 rows, const sf::Texture& t, sf::Time TimePerFrame, bool Repeat = true);
+		Animation(sf::Uint16 columns, sf::Uint16 rows, const sf::Texture& t, sf::Time timePerFrame, bool repeat = true);
 
 		Animation();
 
-		///////////////////////////////////////////////////
-		/// \brief Sets the frame index of the Animation
-		///
-		/// If you would want to manually set the frame of the animation,
-		/// 	you can do that with this function.
-		/// Simply call it with the index of the frame and the
-		/// 	drawable affected.
-		/// drawable.GetAnimation()->SetFrame('index', drawable)
-		///
-		/// \param index The index you want to change to
-		/// \param entity The drawable you want the change to affect
-		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
-		///////////////////////////////////////////////////
-		void SetFrame(sf::Uint32 index, bool speedToZero = false);
 
-		
-		bool Update();
-
-
-
+		friend Drawable;
 	};
 }

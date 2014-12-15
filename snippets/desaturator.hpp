@@ -14,7 +14,7 @@ namespace bzsf {
 
 	public:
 		//Return array of pixels
-		sf::Uint8 * GetPixels();
+		sf::Uint8 * getPixels();
 
 		Desaturator(const sf::Image& img, sf::Uint16 _duration);
 

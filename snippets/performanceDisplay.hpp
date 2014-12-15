@@ -18,27 +18,29 @@ namespace bzsf {
 
 			sf::Clock clock;
 
-			void Update();
-
 		public:
+			void update();
+			
 			PElement(sf::Font& font, 
 				std::string elementText,
 				std::string postfix, 
 				sf::Time updateInterval, 
 				sf::Uint32 textSize);
 
-			void PushValue(float value);
+			void pushValue(float value);
 
-			void SetFont(sf::Font& font);
-			void SetColor(sf::Color color);
+			void setFont(const sf::Font& font);
+			void setColor(const sf::Color& color);
 
-			void Draw(sf::RenderTarget& window, sf::Vector2f pos1, sf::Vector2f pos2, sf::RenderStates states = sf::RenderStates::Default);
+			void draw(sf::RenderTarget& window, sf::Vector2f pos1, sf::Vector2f pos2, sf::RenderStates states = sf::RenderStates::Default);
 		};
 	}
 
-	class PerformanceDisplay {
+
+	class PerformanceDisplay : public sf::Drawable {
 	private:
-		std::map<std::string, PElement> elements;
+		mutable std::map<std::string, PElement> elements;
+		
 		sf::Font* font;
 		sf::Uint32 textSize;
 		sf::Uint32 offset;
@@ -46,25 +48,25 @@ namespace bzsf {
 
 		sf::Vector2f pos;
 
+	private:
+		void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const;
+
 	public:
-		PerformanceDisplay(sf::Font* Font = nullptr, 
-			sf::Color c = sf::Color(),
+		PerformanceDisplay(sf::Color c = sf::Color(),
 			sf::Vector2f pos = sf::Vector2f(100 , 10),
 			sf::Uint32 textSize = 12u, 
-			sf::Uint32 offset = 2u);
+			sf::Uint32 offset = 2u,
+			sf::Font* font = nullptr);
 
-		void RegisterElement(std::string ID, 
+		void registerElement(std::string ID, 
 			std::string elementText, 
 			sf::Time updateInterval = sf::seconds(0.1f), 
 			std::string postfix = "");
-		void PushValue(std::string ID, float value);
+		void pushValue(std::string ID, float value);
 
 
-		void SetFont(sf::Font& font);
-		void SetColor(sf::Color c);
-
-
-		void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
+		void setFont(sf::Font& font);
+		void setColor(const sf::Color& c);
+		void setPosition(sf::Vector2f pos);	
 	};
-
 }

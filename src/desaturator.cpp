@@ -1,7 +1,34 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
-	sf::Uint8 * Desaturator::GetPixels() {
+	Desaturator::Desaturator(const sf::Image& img, sf::Uint16 _duration) : duration(_duration), done(false), pixels(nullptr) {
+		area = img.getSize();
+
+		targetPixels = new sf::Uint8[area.x*area.y];
+		startPixels = new sf::Uint8[area.x*area.y * 4];
+
+		//Create array of target pixels
+		for(sf::Uint16 x = 0; x < img.getSize().x; x++) {
+			for(sf::Uint16 y = 0; y < img.getSize().y; y++) {
+				sf::Color c = img.getPixel(x, y); // Grab the current color
+
+				// Calculate gray color
+				//sf::Uint8 tC = (max(c.r, max(c.g, c.b)) + min(c.r, min(c.g, c.b)))/2; // Lightness
+				sf::Uint8 tC = sf::Uint8(0.21f * c.r + 0.72f * c.g + 0.07f * c.b); //Luminosity
+				//sf::Uint8 tC = (c.r + c.g + c.b)/3; // Average
+
+				sf::Uint32 pos = y * area.x;
+				startPixels[4 * (x + pos)] = c.r; // R
+				startPixels[4 * (x + pos) + 1] = c.g; // G
+				startPixels[4 * (x + pos) + 2] = c.b; // B
+				startPixels[4 * (x + pos) + 3] = c.a; // A
+
+				targetPixels[x + pos] = tC;
+			}
+		}
+	}
+	
+	sf::Uint8 * Desaturator::getPixels() {
 		float factor;
 		if(duration != 0) {
 			factor = float(clock.getElapsedTime().asMilliseconds()) / duration;
@@ -32,35 +59,6 @@ namespace bzsf {
 		}
 
 		return pixels;
-	}
-
-
-
-	Desaturator::Desaturator(const sf::Image& img, sf::Uint16 _duration) : duration(_duration), done(false), pixels(nullptr) {	
-		area = img.getSize();
-
-		targetPixels = new sf::Uint8[area.x*area.y];
-		startPixels = new sf::Uint8[area.x*area.y*4];
-		
-		//Create array of target pixels
-		for(sf::Uint16 x = 0; x < img.getSize().x; x++) {
-			for(sf::Uint16 y = 0; y < img.getSize().y; y++) {
-				sf::Color c = img.getPixel(x, y); // Grab the current color
-
-				// Calculate gray color
-				//sf::Uint8 tC = (max(c.r, max(c.g, c.b)) + min(c.r, min(c.g, c.b)))/2; // Lightness
-				sf::Uint8 tC = sf::Uint8(0.21f * c.r + 0.72f * c.g + 0.07f * c.b); //Luminosity
-				//sf::Uint8 tC = (c.r + c.g + c.b)/3; // Average
-
-				sf::Uint32 pos = y * area.x;
-				startPixels[4*(x + pos)]   = c.r; // R
-				startPixels[4*(x + pos)+1] = c.g; // G
-				startPixels[4*(x + pos)+2] = c.b; // B
-				startPixels[4*(x + pos)+3] = c.a; // A
-			
-				targetPixels[x + pos] = tC;
-			}
-		}
 	}
 
 	Desaturator::~Desaturator() {

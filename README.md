@@ -1,5 +1,5 @@
-BZeps-SFML-Snippets
-===================
+bzsf
+====
 Small bits and pieces I have coded over time to make my time with SFML easier.
 
 State Machine
@@ -17,18 +17,6 @@ Desaturator
 -----------
 Takes an sf::Image and desaturates it over a set duration.    
 Note: Not suitable for larger images due to CPU-hogging.
-
-ParticleSystem
---------------
-A simple yet powerful particle system.    
-
-Features include:
-
-- Animated particles. (With use of bzsf::Animation)
-- Two modes of particle decay. Friction until speed hits zero, or a set lifetime.
-- Gravity in any direction.
-- Lots of control over visual representation.
-- Create unowned particle emitters which destroy themselves after a set amount of time.
 
 OnScreenLog
 -----------
@@ -69,6 +57,19 @@ Precision is the regular datastructure, while Fast vastly improves the performan
 
 Precision: 	http://i.imgur.com/lt1Lzwu.png
 Fast: 		http://i.imgur.com/45lwCOi.png
+
+ParticleSystem
+--------------
+#### Not that good right now :/ ####
+A simple yet powerful particle system.    
+
+Features include:
+
+- Animated particles. (With use of bzsf::Animation)
+- Two modes of particle decay. Friction until speed hits zero, or a set lifetime.
+- Gravity in any direction.
+- Lots of control over visual representation.
+- Create unowned particle emitters which destroy themselves after a set amount of time.
 
 ### Note ###
 Current binary is tested only with 64-bit Visual Studio Professional 2013.    

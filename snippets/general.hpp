@@ -3,13 +3,19 @@ namespace bzsf {
 	float DEGTORAD(float deg);
 	float RADTODEG(float rad);
 
+	// Generalized toString
+	template<typename T>
+	std::string toString(const T& t);
+
+	template<typename T>
+	T fromString(const std::string& str);
 
 	// Helper functions
-	float Length(sf::Vector2f vector);
+	float length(sf::Vector2f vector);
 
-	float SqrLength(sf::Vector2f vector);
+	float sqrLength(sf::Vector2f vector);
 
-	sf::Vector2f UnitVector(sf::Vector2f vector);
+	sf::Vector2f unitVector(sf::Vector2f vector);
 
 
 	// Float Randomization
@@ -85,3 +91,6 @@ namespace bzsf {
 	};*/
 
 } //ENDOF NAMESPACE bzsf
+
+
+#include "general.inl"

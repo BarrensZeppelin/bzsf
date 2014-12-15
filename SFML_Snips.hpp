@@ -19,6 +19,7 @@
 #include <array>
 #include <vector>
 #include <set>
+#include <unordered_map>
 #include <map>
 #include <math.h>
 #include <time.h>
@@ -31,14 +32,14 @@
 
 // Include the Snippets:
 
-#include <BZeps-SFML-Snippets\snippets\general.hpp>
-#include <BZeps-SFML-Snippets\snippets\gameHandler.hpp>
-#include <BZeps-SFML-Snippets\snippets\drawable.hpp>
-#include <BZeps-SFML-Snippets\snippets\desaturator.hpp>
-#include <BZeps-SFML-Snippets\snippets\onScreenLog.hpp>
-#include <BZeps-SFML-Snippets\snippets\state.hpp>
-#include <BZeps-SFML-Snippets\snippets\stateStack.hpp>
-#include <BZeps-SFML-Snippets\snippets\performanceDisplay.hpp>
-#include <BZeps-SFML-Snippets\snippets\quadTree.hpp>
+#include <bzsf\snippets\general.hpp>
+#include <bzsf\snippets\gameHandler.hpp>
+#include <bzsf\snippets\drawable.hpp>
+#include <bzsf\snippets\desaturator.hpp>
+#include <bzsf\snippets\onScreenLog.hpp>
+#include <bzsf\snippets\state.hpp>
+#include <bzsf\snippets\stateStack.hpp>
+#include <bzsf\snippets\performanceDisplay.hpp>
+#include <bzsf\snippets\quadTree.hpp>
 
 #endif
