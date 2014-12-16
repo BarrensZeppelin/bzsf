@@ -1,28 +1,27 @@
 #include <SFML_Snips.hpp>
+#include <bzsf\snippets\drawable\tsTile.hpp>
 
 namespace bzsf {
-	
-	tsTile::tsTile() : xOffset(0), yOffset(0), width(0), height(0), texture(0) {}
+	Tileset::Tileset(const sf::Texture& texture, sf::Vector2u frameSize) 
+	: tiles(texture.getSize().x / frameSize.x)
+	, texture(&texture) {
+		
+		for(sf::Uint32 i = 0; i < tiles.size(); i++)
+			tiles[i].resize(texture.getSize().y / frameSize.y);
 
-	TilesetPtr NewTileset(const sf::Texture& texture, int hSize, int vSize) {
-		TilesetPtr tilesetptr = TilesetPtr(new Tileset(texture.getSize().x / hSize));
-		Tileset& tileset = *tilesetptr.get();
-		for(sf::Uint32 i = 0; i < tileset.size(); i++) {
-			tileset[i].resize(texture.getSize().y / vSize);
-		}
-
-		for(sf::Uint32 i = 0; i < texture.getSize().x / hSize; i++) {
-			for(sf::Uint32 u = 0; u < texture.getSize().y / vSize; u++) {
-				tileset[i][u].xOffset = i*hSize;
-				tileset[i][u].yOffset = u*vSize;
-				tileset[i][u].width	= hSize;
-				tileset[i][u].height = vSize;
-				tileset[i][u].texture = &texture;
+		for(sf::Uint32 i = 0; i < texture.getSize().x / frameSize.x; i++) {
+			for(sf::Uint32 u = 0; u < texture.getSize().y / frameSize.y; u++) {
+				tiles[i][u]->xOffset = i*frameSize.x;
+				tiles[i][u]->yOffset = u*frameSize.y;
+				tiles[i][u]->width	= frameSize.x;
+				tiles[i][u]->height = frameSize.y;
+				tiles[i][u]->texture = &texture;
 			}
 		}
-
-		return tilesetptr;
 	}
 
 
+	tsTile* Tileset::get(sf::Uint32 column, sf::Uint32 row) {
+		return tiles[column][row].get();
+	}
 }

@@ -13,8 +13,6 @@ namespace bzsf {
 		mutable int animIndex;
 
 		bzsf::Animation* anim = nullptr;
-		bzsf::tsTile* texTile = nullptr;
-		const sf::Texture* tex = nullptr;
 
 	private:
 		void init();
@@ -22,10 +20,10 @@ namespace bzsf {
 		void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const;
 
 	public:
-		const tsTile * getTile() const;
 		Animation& getAnimation();
-		const sf::Texture& getTexture();
-		
+		const sf::Texture& getTexture() const;
+		sf::IntRect getTextureRect() const;
+
 		sf::FloatRect getLocalBounds() const;
 		sf::FloatRect getGlobalBounds() const;
 		const sf::Color& getColor() const;
@@ -35,13 +33,13 @@ namespace bzsf {
 
 		void setAnimation(const Animation& a);
 		void setTexture(const sf::Texture& Tex);
-		void setTile(const tsTile * tl);
+		void setTile(const tsTile* tl);
 
 
 		Drawable();
-		explicit Drawable(const Animation& animation);
+		explicit Drawable(Animation& animation);
 		explicit Drawable(const sf::Texture& texture);
-		explicit Drawable(tsTile * tile);
+		explicit Drawable(const tsTile* tile);
 	};
 
 } //ENDOF NAMESPACE bzsf 

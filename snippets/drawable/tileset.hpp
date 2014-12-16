@@ -3,24 +3,24 @@
 
 namespace bzsf {
 
-	class tsTile {
+	struct tsTile;
+	
+	class Tileset {
 	public:
-		int xOffset;
-		int yOffset;
-		int width;
-		int height;
+		typedef std::unique_ptr<Tileset> Ptr;
+
+	private:
+		typedef std::unique_ptr<tsTile> tPtr;
+
+		std::vector<std::vector<tPtr>> tiles;
+
+	public:
+		Tileset(const sf::Texture& texture, sf::Vector2u frameSize);
 
 		const sf::Texture* texture;
-		
-		tsTile();
+	
+		tsTile* get(sf::Uint32 column, sf::Uint32 row);
 	};
-
-
-	typedef std::vector<std::vector<tsTile>> Tileset;
-	typedef std::unique_ptr<Tileset> TilesetPtr;
-
-
-	TilesetPtr NewTileset(const sf::Texture& texture, int hSize, int vSize);
 
 
 } //ENDOF NAMESPACE bzsf

@@ -1,9 +1,10 @@
 #include <SFML_Snips.hpp>
+#include <bzsf\snippets\drawable\tsTile.hpp>
 
 namespace bzsf {
 	Drawable::Drawable() {}
 
-	Drawable::Drawable(const bzsf::Animation& animation) {
+	Drawable::Drawable(Animation& animation) {
 		init();
 		setAnimation(animation);
 	}
@@ -13,14 +14,13 @@ namespace bzsf {
 		setTexture(texture);
 	}
 
-	Drawable::Drawable(tsTile* tile) {
+	Drawable::Drawable(const tsTile* tile) {
 		init();
 		setTile(tile);
 	}
 
 
 	void Drawable::init() {
-		texTile = nullptr;
 		animIndex = 0;
 		dType = NONE;
 	}
@@ -40,10 +40,9 @@ namespace bzsf {
 	}
 
 
-
-	const tsTile *	Drawable::getTile()	const{return texTile;}
-	Animation&		Drawable::getAnimation() {return *anim;}
-	const sf::Texture&	Drawable::getTexture() {return *tex;}
+	Animation&		Drawable::getAnimation() { return *anim; }
+	const sf::Texture&	Drawable::getTexture() const { return *sprite.getTexture(); }
+	sf::IntRect Drawable::getTextureRect() const { return sprite.getTextureRect(); }
 	
 	sf::FloatRect Drawable::getLocalBounds() const {
 		return sprite.getLocalBounds();
@@ -65,6 +64,8 @@ namespace bzsf {
 
 	void Drawable::setAnimation(const bzsf::Animation& a) {
 		anim = const_cast<Animation*>(&a);
+		animIndex = anim->getIndex();
+
 		sprite.setTexture(a.getTexture());
 		sprite.setTextureRect(a.getFrameRect());
 
@@ -73,17 +74,16 @@ namespace bzsf {
 
 
 	void Drawable::setTexture(const sf::Texture& Tex) {
-		tex = &Tex;
-
-		sprite.setTexture(*tex);
+		anim = nullptr;
+		sprite.setTexture(Tex);
 		
 		dType = TEXTURE;
 	}
 
 
-	void Drawable::setTile(const bzsf::tsTile * tl) {
-		texTile = const_cast<bzsf::tsTile*>(tl); // WOW - MUCH HACK
-		
+	void Drawable::setTile(const bzsf::tsTile* tl) {
+		anim = nullptr;
+
 		sprite.setTexture(*tl->texture);
 		sprite.setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
 
