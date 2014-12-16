@@ -11,6 +11,7 @@ namespace bzsf {
 
 		for(sf::Uint32 i = 0; i < texture.getSize().x / frameSize.x; i++) {
 			for(sf::Uint32 u = 0; u < texture.getSize().y / frameSize.y; u++) {
+				tiles[i][u].reset(new tsTile());
 				tiles[i][u]->xOffset = i*frameSize.x;
 				tiles[i][u]->yOffset = u*frameSize.y;
 				tiles[i][u]->width	= frameSize.x;
@@ -23,5 +24,10 @@ namespace bzsf {
 
 	tsTile* Tileset::get(sf::Uint32 column, sf::Uint32 row) {
 		return tiles[column][row].get();
+	}
+
+
+	Tileset::~Tileset() {
+		tiles.clear();
 	}
 }

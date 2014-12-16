@@ -20,6 +20,8 @@ namespace bzsf {
 		const sf::Texture* texture;
 	
 		tsTile* get(sf::Uint32 column, sf::Uint32 row);
+
+		~Tileset();
 	};
 
 
