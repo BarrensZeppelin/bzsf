@@ -34,7 +34,10 @@ namespace bzsf {
 			}
 		}
 
-		if(dType != NONE) { window.draw(*(sf::Sprite*)this, states); }
+		if(dType != NONE) { 
+			sf::Sprite s(*this); // Wow - I can't seem to find a way to call sf::Sprite's draw function that isn't this overridden version, that causes a stack overflow
+			window.draw(s, states);
+		}
 	}
 
 
