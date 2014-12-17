@@ -26,67 +26,43 @@ namespace bzsf {
 	}
 
 	void Drawable::draw(sf::RenderTarget& window, sf::RenderStates states) const {
-		states.transform *= getTransform();
-		
 		if(dType == ANIMATION) {
 			anim->update();
 			if(anim->getIndex() != animIndex) {
 				animIndex = anim->getIndex();
-				sprite.setTextureRect(anim->getFrameRect());
+				const_cast<sf::Sprite*>((const sf::Sprite*)this)->setTextureRect(anim->getFrameRect());
 			}
 		}
 
-		if(dType != NONE) { window.draw(sprite, states); }
+		if(dType != NONE) { window.draw(*(sf::Sprite*)this, states); }
 	}
 
 
-	Animation&		Drawable::getAnimation() { return *anim; }
-	const sf::Texture&	Drawable::getTexture() const { return *sprite.getTexture(); }
-	sf::IntRect Drawable::getTextureRect() const { return sprite.getTextureRect(); }
-	
-	sf::FloatRect Drawable::getLocalBounds() const {
-		return sprite.getLocalBounds();
-	}
-
-	sf::FloatRect Drawable::getGlobalBounds() const {
-		return sprite.getGlobalBounds();
-	}
-
-	const sf::Color& Drawable::getColor() const {
-		return sprite.getColor();
-	}
-
-
-	void Drawable::setColor(const sf::Color& color) {
-		sprite.setColor(color);
-	}
-
+	Animation* Drawable::getAnimation() { return anim; }
 
 	void Drawable::setAnimation(const bzsf::Animation& a) {
+		setTexture(a.getTexture());
+		setTextureRect(a.getFrameRect());
+		
 		anim = const_cast<Animation*>(&a);
 		animIndex = anim->getIndex();
-
-		sprite.setTexture(a.getTexture());
-		sprite.setTextureRect(a.getFrameRect());
-
 		dType = ANIMATION;
 	}
 
 
-	void Drawable::setTexture(const sf::Texture& Tex) {
-		anim = nullptr;
-		sprite.setTexture(Tex);
+	void Drawable::setTexture(const sf::Texture& Tex) {	
+		sf::Sprite::setTexture(Tex, true);
 		
+		anim = nullptr;
 		dType = TEXTURE;
 	}
 
 
 	void Drawable::setTile(const bzsf::tsTile* tl) {
+		setTexture(*tl->texture);
+		setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
+
 		anim = nullptr;
-
-		sprite.setTexture(*tl->texture);
-		sprite.setTextureRect(sf::IntRect(tl->xOffset, tl->yOffset, tl->width, tl->height));
-
 		dType = TILE;
 	}
 }

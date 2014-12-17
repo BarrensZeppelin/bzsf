@@ -3,15 +3,13 @@
 
 namespace bzsf {
 
-	class Drawable : public sf::Transformable, public sf::Drawable {
+	class Drawable : public sf::Sprite {
 	private:
 		enum DrawType {TEXTURE, TILE, ANIMATION, NONE};
 
 		DrawType dType;
 
-		mutable sf::Sprite sprite;
 		mutable int animIndex;
-
 		bzsf::Animation* anim = nullptr;
 
 	private:
@@ -20,16 +18,7 @@ namespace bzsf {
 		void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const;
 
 	public:
-		Animation& getAnimation();
-		const sf::Texture& getTexture() const;
-		sf::IntRect getTextureRect() const;
-
-		sf::FloatRect getLocalBounds() const;
-		sf::FloatRect getGlobalBounds() const;
-		const sf::Color& getColor() const;
-
-
-		void setColor(const sf::Color& color);
+		Animation* getAnimation();
 
 		void setAnimation(const Animation& a);
 		void setTexture(const sf::Texture& Tex);
