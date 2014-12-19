@@ -9,21 +9,20 @@ namespace bzsf {
 
 		DrawType dType;
 
-		mutable int animIndex;
+		sf::Uint32 animIndex;
 		bzsf::Animation* anim = nullptr;
 
 	private:
 		void init();
 
-		void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const;
-
 	public:
 		Animation* getAnimation();
 
-		void setAnimation(const Animation& a);
+		void setAnimation(Animation& a);
 		void setTexture(const sf::Texture& Tex);
 		void setTile(const tsTile* tl);
 
+		void update(sf::Time dt);
 
 		Drawable();
 		explicit Drawable(Animation& animation);

@@ -25,29 +25,14 @@ namespace bzsf {
 		dType = NONE;
 	}
 
-	void Drawable::draw(sf::RenderTarget& window, sf::RenderStates states) const {
-		if(dType == ANIMATION) {
-			anim->update();
-			if(anim->getIndex() != animIndex) {
-				animIndex = anim->getIndex();
-				const_cast<sf::Sprite*>((const sf::Sprite*)this)->setTextureRect(anim->getFrameRect());
-			}
-		}
-
-		if(dType != NONE) { 
-			sf::Sprite s(*this); // Wow - I can't seem to find a way to call sf::Sprite's draw function that isn't this overridden version, that causes a stack overflow
-			window.draw(s, states);
-		}
-	}
-
 
 	Animation* Drawable::getAnimation() { return anim; }
 
-	void Drawable::setAnimation(const bzsf::Animation& a) {
+	void Drawable::setAnimation(bzsf::Animation& a) {
 		setTexture(a.getTexture());
 		setTextureRect(a.getFrameRect());
 		
-		anim = const_cast<Animation*>(&a);
+		anim = &a;
 		animIndex = anim->getIndex();
 		dType = ANIMATION;
 	}
@@ -67,5 +52,17 @@ namespace bzsf {
 
 		anim = nullptr;
 		dType = TILE;
+	}
+
+
+	
+	void Drawable::update(sf::Time dt) {
+		if(dType == ANIMATION) {
+			anim->update();
+			if(anim->getIndex() != animIndex) {
+				animIndex = anim->getIndex();
+				const_cast<Drawable*>(this)->setTextureRect(anim->getFrameRect());
+			}
+		}
 	}
 }
