@@ -99,8 +99,10 @@ namespace bzsf {
 
 	void PerformanceDisplay::pushValue(std::string ID, float value) {
 		auto iter = elements.find(ID);
-		if(iter == elements.end())
+		if(iter == elements.end()) {
 			registerElement(ID, ID); // Create a new PElement with the ID
+			iter = elements.find(ID);
+		}
 
 		iter->second.pushValue(value);
 	}

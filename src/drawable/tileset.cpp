@@ -9,6 +9,8 @@ namespace bzsf {
 		for(sf::Uint32 i = 0; i < tiles.size(); i++)
 			tiles[i].resize(texture.getSize().y / frameSize.y);
 
+		size = sf::Vector2u(tiles.size(), tiles[0].size());
+
 		for(sf::Uint32 i = 0; i < texture.getSize().x / frameSize.x; i++) {
 			for(sf::Uint32 u = 0; u < texture.getSize().y / frameSize.y; u++) {
 				tiles[i][u].reset(new tsTile());
@@ -24,6 +26,10 @@ namespace bzsf {
 
 	tsTile* Tileset::get(sf::Uint32 column, sf::Uint32 row) {
 		return tiles[column][row].get();
+	}
+
+	const sf::Vector2u Tileset::getSize() const {
+		return size;
 	}
 
 

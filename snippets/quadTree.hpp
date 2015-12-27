@@ -9,6 +9,7 @@ namespace bzsf {
 			PRECISE, // Minimize collision pairs
 			FAST // Maximize QuadTree speed
 		};
+
 	protected:
 		const sf::Uint16 MAXLEVEL;
 		const sf::Uint16 MAXNODES;
@@ -23,10 +24,11 @@ namespace bzsf {
 
 	protected:
 		inline bool isSplit();
+		inline bool intersects(const sf::FloatRect& rect);
 
 		virtual void split();
 
-		inline bool intersects(const sf::FloatRect& rect);
+		void retrieveAllHelper(std::set<std::vector<ObjectT*>>& set);
 
 	public:
 		/**
@@ -53,10 +55,11 @@ namespace bzsf {
 			@param rect Bounding rectangle of the object
 		*/
 		void addObject(ObjectT* obj, const sf::FloatRect& rect);
-		std::set<ObjectT*> retrieve(const sf::FloatRect& rect);
+		std::unordered_set<ObjectT*> retrieve(const sf::FloatRect& rect);
+
+		std::set<std::vector<ObjectT*>> retrieveAll();
 	};
 
 }
-
 
 #include "quadTree.inl"

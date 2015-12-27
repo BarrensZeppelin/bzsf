@@ -1,9 +1,27 @@
 
 namespace bzsf {
+	template<typename ObjectT>
+	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, Type type, sf::Uint16 maxlevel, sf::Uint16 maxobjects, sf::Uint16 level) :
+		bounds(bounds)
+		, rects()
+		, objects()
+		, nodes()
+		, level(level)
+		, MAXLEVEL(maxlevel)
+		, MAXNODES(maxobjects)
+		, type(type) {
+		for(QuadTree* q : nodes)
+			q = nullptr;
+	}
 
 	template<typename ObjectT>
 	bool QuadTree<ObjectT>::isSplit() {
 		return nodes[0] != nullptr;
+	}
+
+	template<typename ObjectT>
+	bool QuadTree<ObjectT>::intersects(const sf::FloatRect& rect) {
+		return bounds.intersects(rect);
 	}
 
 
@@ -33,30 +51,17 @@ namespace bzsf {
 
 
 	template<typename ObjectT>
-	bool QuadTree<ObjectT>::intersects(const sf::FloatRect& rect) {
-		return bounds.intersects(rect);
+	void QuadTree<ObjectT>::retrieveAllHelper(std::set<std::vector<ObjectT*>>& set) {
+		if(!isSplit()) {
+			if(objects.size() >= 2)
+				set.emplace(objects.begin(), objects.end());
+		} else
+			for(QuadTree* q : nodes)
+				q->retrieveAllHelper(set);
 	}
 
 
-
-	template<typename ObjectT>
-	QuadTree<ObjectT>::QuadTree(sf::FloatRect bounds, Type type, sf::Uint16 maxlevel, sf::Uint16 maxobjects, sf::Uint16 level) :
-		bounds(bounds)
-	, rects()
-	, objects()
-	, nodes()
-	, level(level)
-	, MAXLEVEL(maxlevel)
-	, MAXNODES(maxobjects)
-	, type(type) {
-		for(QuadTree* q : nodes)
-			q = nullptr;
-	}
-
-	template<typename ObjectT>
-	QuadTree<ObjectT>::~QuadTree() {
-		clear();
-	}
+	
 
 	template<typename ObjectT>
 	void QuadTree<ObjectT>::clear() {
@@ -89,8 +94,8 @@ namespace bzsf {
 
 	
 	template<typename ObjectT>
-	std::set<ObjectT*> QuadTree<ObjectT>::retrieve(const sf::FloatRect& rect) {
-		std::set<ObjectT*> _set;
+	std::unordered_set<ObjectT*> QuadTree<ObjectT>::retrieve(const sf::FloatRect& rect) {
+		std::unordered_set<ObjectT*> _set;
 
 		if(!intersects(rect))
 			return _set;
@@ -107,5 +112,21 @@ namespace bzsf {
 		}
 
 		return _set;
+	}
+
+
+	template<typename ObjectT>
+	std::set<std::vector<ObjectT*>> QuadTree<ObjectT>::retrieveAll() {
+		assert(("retrieveAll() is undefined with FAST", type == PRECISE));
+
+		std::set<std::vector<ObjectT*>> set;
+		retrieveAllHelper(set);
+		return set;
+	}
+
+
+	template<typename ObjectT>
+	QuadTree<ObjectT>::~QuadTree() {
+		clear();
 	}
 }

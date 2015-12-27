@@ -2,34 +2,15 @@
 #include <bzsf\snippets\drawable\tsTile.hpp>
 
 namespace bzsf {
-	Drawable::Drawable() {}
-
-	Drawable::Drawable(Animation& animation) {
-		init();
-		setAnimation(animation);
-	}
-
-	Drawable::Drawable(const sf::Texture& texture) {
-		init();
-		setTexture(texture);
-	}
-
-	Drawable::Drawable(const tsTile* tile) {
-		init();
-		setTile(tile);
-	}
-
-
-	void Drawable::init() {
-		animIndex = 0;
-		dType = NONE;
-	}
+	Drawable::Drawable()
+		: animIndex(0)
+		, dType(NONE) {}
 
 
 	Animation* Drawable::getAnimation() { return anim; }
 
 	void Drawable::setAnimation(bzsf::Animation& a) {
-		setTexture(a.getTexture());
+		setTexture(*a.getTexture());
 		setTextureRect(a.getFrameRect());
 		
 		anim = &a;
@@ -58,10 +39,10 @@ namespace bzsf {
 	
 	void Drawable::update(sf::Time dt) {
 		if(dType == ANIMATION) {
-			anim->update();
+			anim->update(dt);
 			if(anim->getIndex() != animIndex) {
 				animIndex = anim->getIndex();
-				const_cast<Drawable*>(this)->setTextureRect(anim->getFrameRect());
+				setTextureRect(anim->getFrameRect());
 			}
 		}
 	}

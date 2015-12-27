@@ -2,6 +2,9 @@ namespace bzsf {
 	class Drawable;
 
 	class Animation {
+	public:
+		typedef std::unique_ptr<Animation> Ptr;
+
 	private:
 		sf::Vector2u frameSize;
 		
@@ -13,12 +16,10 @@ namespace bzsf {
 
 		bool repeat;
 
-		sf::Clock timer;
-
-		sf::Texture texture;
+		const sf::Texture* texture;
 	
 	protected:
-		bool update();
+		bool update(sf::Time dt);
 
 	public:
 		sf::Vector2u getFrameSize() const;
@@ -26,7 +27,7 @@ namespace bzsf {
 		sf::Uint32 getFrameCount() const;
 		sf::Time getTimePerFrame() const;
 		bool isRepeating() const;
-		const sf::Texture& getTexture() const;
+		const sf::Texture* getTexture() const;
 
 		const sf::IntRect getFrameRect() const;
 		
@@ -46,9 +47,8 @@ namespace bzsf {
 		/// \param index The index you want to change to
 		/// \param entity The drawable you want the change to affect
 		/// \param resetOverflow set the frame time overflow to zero when changing
-		/// \param speedToZero Default: false. Reset the speed to 0 after the change of frame?
 		///////////////////////////////////////////////////
-		void setFrame(sf::Uint32 index, bool resetOverflow = true, bool speedToZero = false);
+		void setFrame(sf::Uint32 index, bool resetOverflow = true);
 
 
 		/////////////////////////////////////////////////

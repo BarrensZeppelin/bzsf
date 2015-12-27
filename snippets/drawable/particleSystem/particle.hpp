@@ -4,8 +4,10 @@ namespace bzsf {
 	class Emitter;
 
 	class Particle {
+	public:
+		typedef std::unique_ptr<Particle> Ptr;
+
 	private:
-		std::unique_ptr<Drawable> drawable;
 		sf::Color color;
 		sf::Vector2f position;
 
@@ -13,6 +15,7 @@ namespace bzsf {
 
 		sf::Vector2f force;
 		sf::Vector2f friction;
+		sf::Vector2f gravity;
 
 		bool dead;
 		sf::Uint8 startAlpha;
@@ -20,29 +23,22 @@ namespace bzsf {
 		sf::Time life;
 		sf::Clock fadeClock;
 
-		sf::Vector2f gravity;
+		std::unique_ptr<Animation> animCopy;
+		tsTile* tile;
 
-		std::shared_ptr<Animation> animCopy;
+	private:
+		//void setTileset(Tileset * ts);
+		void copyAnimation(const Animation* a);
 
-		void SetTileset(Tileset * ts);
-		void CopyAnimation(Animation* a);
-
-		void FixAngle(float& a);
-
-		void Initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col);
+		void initialise(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col);
 
 	public:
-		sf::Clock GetClock();
-		bool IsDead();
+		const sf::Clock& getClock() const;
+		bool isDead();
+		sf::IntRect getTextureRect();
 
 		Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col);
-		Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Animation* anim);
-		Particle(float _a, float _v, float fric, sf::Vector2f grav, sf::Time lifeTime, sf::Vector2f pos, float scale, sf::Color col, Tileset * ts);
 
-		void Update(const sf::Time& mDelta);
-
-		friend class Emitter;
+		void update(sf::Time dt);
 	};
-
-	typedef std::unique_ptr<Particle> ParticlePtr;
 }

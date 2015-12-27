@@ -1,7 +1,7 @@
 #include <SFML_Snips.hpp>
 
 namespace bzsf {
-	void OnScreenLog::UpdateEntities() {
+	void OnScreenLog::updateEntities() {
 		entities.resize(maxSize);
 
 		for(sf::Uint32 i = 0; i < entities.size(); ++i) {
@@ -13,7 +13,7 @@ namespace bzsf {
 		}
 	}
 
-	void OnScreenLog::FitLog() {
+	void OnScreenLog::fitLog() const {
 		while(log.size() > maxSize) {
 			log.pop_back();
 		}
@@ -21,28 +21,28 @@ namespace bzsf {
 
 
 
-	void OnScreenLog::SetPosition(sf::Vector2f pos) {
+	void OnScreenLog::setPosition(sf::Vector2f pos) {
 		if(pos != position) {
 			position = pos;
-			UpdateEntities();
+			updateEntities();
 		}
 	}
 
-	void OnScreenLog::SetSize(sf::Uint32 size) {
+	void OnScreenLog::setSize(sf::Uint32 size) {
 		if(size != maxSize) {
 			maxSize = size;
-			UpdateEntities(); // Init new text entities
+			updateEntities(); // Init new text entities
 		}
 	}
 
-	void OnScreenLog::SetFont(sf::Font& font) {
+	void OnScreenLog::setFont(sf::Font& font) {
 		if(&font != logFont) {
 			logFont = &font;
-			UpdateEntities();
+			updateEntities();
 		}
 	}
 
-	void OnScreenLog::SetFadeTime(sf::Time fadeDelay, sf::Time fadeDuration) {
+	void OnScreenLog::setFadeTime(sf::Time fadeDelay, sf::Time fadeDuration) {
 		if(fadeDelay != fadeTime.x || fadeDuration != fadeTime.y) {
 			fadeTime = Vector2t(fadeDelay, fadeDuration);
 		}
@@ -50,11 +50,11 @@ namespace bzsf {
 
 
 
-	void OnScreenLog::Append(const std::string& str) {
+	void OnScreenLog::append(const std::string& str) {
 		log.push_front(std::make_pair(str, sf::Clock()));
 	}
 
-	void OnScreenLog::Clear() {
+	void OnScreenLog::clear() {
 		log.clear();
 	}
 
@@ -77,14 +77,14 @@ namespace bzsf {
 		logColor(color),
 		fadeTime(fadeDelay, fadeDuration) {
 
-		UpdateEntities();
+		updateEntities();
 
 	}
 
-	void OnScreenLog::Draw(sf::RenderTarget& window, sf::RenderStates states) {
+	void OnScreenLog::draw(sf::RenderTarget& window, sf::RenderStates states) const {
 		if(logFont != nullptr) {
 
-			FitLog();
+			fitLog();
 
 			for(sf::Uint32 i = 0; i < log.size(); ++i) {
 				sf::Uint32 u = maxSize - 1 - i;

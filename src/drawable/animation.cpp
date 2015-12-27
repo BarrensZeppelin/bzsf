@@ -3,7 +3,7 @@
 namespace bzsf {
 	Animation::Animation(sf::Vector2u fSize, const sf::Texture& t, sf::Time timePerFrame, bool repeat) 
 		: repeat(repeat)
-		, texture(t)
+		, texture(&t)
 		, timePerFrame(timePerFrame)
 		, frameSize(fSize)
 		, frameIndex(0)
@@ -16,7 +16,7 @@ namespace bzsf {
 
 	Animation::Animation(sf::Uint16 columns, sf::Uint16 rows, const sf::Texture& t, sf::Time timePerFrame, bool repeat)
 		: repeat(repeat)
-		, texture(t)
+		, texture(&t)
 		, timePerFrame(timePerFrame)
 		, numFrames(columns*rows)
 		, frameIndex(0)
@@ -28,10 +28,11 @@ namespace bzsf {
 	Animation::Animation() {}
 
 
-	bool Animation::update() {
-		if(timePerFrame == sf::Time::Zero) { timer.restart(); return true; } else {
-			bool updated = false;
-			overflow += timer.restart();
+	bool Animation::update(sf::Time dt) {
+		bool updated = false;
+		
+		if(timePerFrame != sf::Time::Zero) {
+			overflow += dt;
 			while(overflow >= timePerFrame) {
 				overflow -= timePerFrame;
 				if(frameIndex < numFrames - 1) {
@@ -42,9 +43,9 @@ namespace bzsf {
 
 				updated = true;
 			}
-
-			return updated;
 		}
+		
+		return updated;
 	}
 
 
@@ -53,11 +54,11 @@ namespace bzsf {
 	sf::Uint32 Animation::getFrameCount() const	{ return numFrames; }
 	sf::Time Animation::getTimePerFrame() const	{ return timePerFrame; }
 	bool Animation::isRepeating() const			{ return repeat; }
-	const sf::Texture& Animation::getTexture() const { return texture; }
+	const sf::Texture* Animation::getTexture() const { return texture; }
 
 	const sf::IntRect Animation::getFrameRect() const {
-		sf::Uint32 column = frameIndex % (texture.getSize().x / frameSize.x);
-		sf::Uint32 row = sf::Uint32(floor(float(frameIndex) / (texture.getSize().x / frameSize.x)));
+		sf::Uint32 column = frameIndex % (texture->getSize().x / frameSize.x);
+		sf::Uint32 row = sf::Uint32(floor(float(frameIndex) / (texture->getSize().x / frameSize.x)));
 
 		sf::IntRect pRect(
 			column * frameSize.x,
@@ -71,14 +72,11 @@ namespace bzsf {
 	void Animation::setTimePerFrame(sf::Time t)	{ timePerFrame = t; }
 
 
-	void Animation::setFrame(sf::Uint32 index, bool resetOverflow, bool speedToZero) {
-		if(index < numFrames) {
-			frameIndex = index;
-			timer.restart();
-			if(resetOverflow)
-				overflow = sf::Time::Zero;
-		} else { std::cerr << "Tried to assign invalid frame " << index << "/" << numFrames-1 << " to an animation." << std::endl; }
-		
-		if(speedToZero) {timePerFrame = sf::Time::Zero;}
+	void Animation::setFrame(sf::Uint32 index, bool resetOverflow) {
+		assert(index < numFrames);
+
+		frameIndex = index;
+		if(resetOverflow)
+			overflow = sf::Time::Zero;
 	}
 }

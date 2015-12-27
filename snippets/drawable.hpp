@@ -12,10 +12,9 @@ namespace bzsf {
 		sf::Uint32 animIndex;
 		bzsf::Animation* anim = nullptr;
 
-	private:
-		void init();
-
 	public:
+		Drawable();
+
 		Animation* getAnimation();
 
 		void setAnimation(Animation& a);
@@ -23,11 +22,6 @@ namespace bzsf {
 		void setTile(const tsTile* tl);
 
 		void update(sf::Time dt);
-
-		Drawable();
-		explicit Drawable(Animation& animation);
-		explicit Drawable(const sf::Texture& texture);
-		explicit Drawable(const tsTile* tile);
 	};
 
 } //ENDOF NAMESPACE bzsf 

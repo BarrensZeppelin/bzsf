@@ -1,12 +1,12 @@
 
 namespace bzsf {
 
-	class OnScreenLog {
+	class OnScreenLog : public sf::Drawable {
 		typedef std::deque<std::pair<std::string, sf::Clock>> Log;
 		typedef sf::Vector2<sf::Time> Vector2t;
 
-		std::vector<sf::Text> entities;
-		Log log;
+		mutable std::vector<sf::Text> entities;
+		mutable Log log;
 
 		sf::Vector2f position;
 		sf::Uint32 maxSize;
@@ -16,24 +16,25 @@ namespace bzsf {
 		sf::Color logColor;
 		Vector2t fadeTime;
 
-		void UpdateEntities();
-		void FitLog();
+		void updateEntities();
+		void fitLog() const;
+
+		void draw(sf::RenderTarget& target, sf::RenderStates = sf::RenderStates::Default) const;
 
 	public:
-		void SetPosition(sf::Vector2f pos);
-		void SetSize(sf::Uint32 size);
-		void SetFont(sf::Font& font);
+		void setPosition(sf::Vector2f pos);
+		void setSize(sf::Uint32 size);
+		void setFont(sf::Font& font);
 
 		////////////////////////////////
 		/// A fade delay of 0 will make the log stay forever
 		/// A fade duration of 0 will make log entries pop instantly after the delay
 		////////////////////////////////
-		void SetFadeTime(sf::Time fadeDelay, sf::Time fadeDuration);
+		void setFadeTime(sf::Time fadeDelay, sf::Time fadeDuration);
 
-		void Append(const std::string& str);
-		void Clear();
+		void append(const std::string& str);
+		void clear();
 
-		void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
 
 		OnScreenLog();
 		OnScreenLog(sf::Font& font,

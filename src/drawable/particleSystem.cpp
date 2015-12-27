@@ -8,28 +8,28 @@ namespace bzsf {
 
 
 
-	Emitter* ParticleSystem::NewEmitter() {
+	Emitter& ParticleSystem::newEmitter() {
 		std::unique_ptr<Emitter> e(new Emitter());
-		e->Kill(Emitter::SOFT);
+		e->kill(Emitter::SOFT);
 		// Kills the emitter in such a way, that it will accept no more than one call to Fuel(),
 		// and it will kill itself afterwards
 
 		unownedEmitters.push_back(std::move(e));
 
-		return unownedEmitters[unownedEmitters.size()-1].get();
+		return *unownedEmitters[unownedEmitters.size()-1];
 	}
 
 
-	std::vector<std::unique_ptr<Emitter>>& ParticleSystem::GetUnownedEmitters() {
+	std::vector<std::unique_ptr<Emitter>>& ParticleSystem::getUnownedEmitters() {
 		return unownedEmitters;
 	}
 
 
-	void ParticleSystem::Draw(sf::RenderTarget& window, sf::RenderStates states) {
-		unownedEmitters.erase(std::remove_if(unownedEmitters.begin(), unownedEmitters.end(), [] (std::unique_ptr<Emitter>& e) {return e->IsDead();}), unownedEmitters.end());
+	void ParticleSystem::draw(sf::RenderTarget& window, sf::RenderStates states) {
+		unownedEmitters.erase(std::remove_if(unownedEmitters.begin(), unownedEmitters.end(), [] (std::unique_ptr<Emitter>& e) {return e->isDead();}), unownedEmitters.end());
 
 		for(std::unique_ptr<Emitter>& e : unownedEmitters) {
-			e->Draw(window, states);
+			window.draw(*e, states);
 		}
 	}
 }

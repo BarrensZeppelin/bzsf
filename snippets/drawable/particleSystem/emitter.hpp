@@ -1,9 +1,9 @@
 
 namespace bzsf {
 
-	class Emitter {
+	class Emitter : public sf::Drawable {
 	public:
-		enum Cut { SOFT = 1, MEDIUM, HARD };
+		enum Cut { NONE, SOFT, MEDIUM, HARD };
 
 	private:
 		sf::Uint32 fuel;
@@ -31,56 +31,61 @@ namespace bzsf {
 		float friction;
 		sf::Vector2f gravity;
 
-
-		sf::Uint8 cutType;
+		Cut cut;
 		bool dead;
 
 		bool firstFuel;
 
-
-		sf::Clock clock;
-
-		std::vector<ParticlePtr> particles;
-		sf::VertexArray particle_vertices;
+		std::vector<Particle::Ptr> particles;
+		mutable sf::VertexArray vertices;
+		mutable bool needsVertexUpdate;
 
 		const sf::Texture* texture;
 
-		Tileset* tileset;
+		const Tileset* tileset;
 		Animation* anim;
 
 
-		void Init();
+	private:
+		void init();
+		void update(sf::Time dt);
+		void draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default) const;
+
+		void computeVertices() const;
+		void addVertex(sf::Vector2f pos, sf::Vector2f texCoords, const sf::Color& color) const;
+
+		sf::IntRect getTextureRect() const;
 
 	public:
-		explicit Emitter();
+		Emitter();
 		explicit Emitter(Animation* anim);
-		explicit Emitter(Tileset* ts);
+		explicit Emitter(const Tileset& ts);
 
-		void SetTileset(const TilesetPtr& ts, bool redraw = false);
-		void SetAnimation(Animation* a, bool redraw = false);
+		void setTileset(const Tileset::Ptr& ts);
+		void setAnimation(const Animation& a);
 
-		void SetAngle(float a, float spread = PI / 2);
-		void SetVelocity(float v, float spread = 0.6f);
-		void SetColor(sf::Color c, float spread = 0.01f, bool redraw = false);
-		void SetScale(float s, float spread = 0.05f, bool redraw = false);
-		void SetLifeTime(sf::Time l, float spread = 0.05f);
+		void setAngle(float a, float spread = PI / 2);
+		void setVelocity(float v, float spread = 0.6f);
+		void setColor(sf::Color c, float spread = 0.01f);
+		void setScale(float s, float spread = 0.05f);
+		void setLifeTime(sf::Time l, float spread = 0.05f);
 
-		void SetOrigin(sf::Vector2f o);
+		void setOrigin(sf::Vector2f o);
 
-		void SetParticlesPerSecond(sf::Uint32 p);
+		void setParticlesPerSecond(sf::Uint32 p);
 
-		void SetFriction(float f);
-		void SetGravity(float angle, float velocity);
-		void SetGravity(sf::Vector2f grav);
-
-
-		void Fuel(sf::Uint32 amount, bool relative = true);
+		void setFriction(float f);
+		void setGravity(float angle, float velocity);
+		void setGravity(sf::Vector2f grav);
 
 
-		sf::Uint32 GetFuel();
-		sf::Uint32 GetParticleCount();
-		bool IsEmpty();
-		bool IsDead();
+		void fuelParticles(sf::Uint32 amount, bool relative = true);
+
+
+		sf::Uint32 getFuel() const;
+		sf::Uint32 getParticleCount() const;
+		bool empty() const;
+		bool isDead() const;
 
 		///////////////////////////////////////////////
 		/// A Soft cut will wait for fuel to empty
@@ -89,13 +94,9 @@ namespace bzsf {
 		///		waits for every particle to disappear
 		/// A Hard cut removes both fuel and particles
 		///////////////////////////////////////////////
-		void Kill(Cut cut = Cut::MEDIUM);
-
-		void Draw(sf::RenderTarget& window, sf::RenderStates states = sf::RenderStates::Default);
+		void kill(Cut cut = Cut::MEDIUM);
 
 		~Emitter();
-
-		friend class ParticleSystem;
 	};
 
 }
