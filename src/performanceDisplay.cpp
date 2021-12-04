@@ -53,8 +53,8 @@ namespace bzsf {
 	}
 
 	void PElement::setColor(const sf::Color& c) {
-		elementText.setColor(c);
-		avgText.setColor(c);
+		elementText.setFillColor(c);
+		avgText.setFillColor(c);
 	}
 
 

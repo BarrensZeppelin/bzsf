@@ -7,7 +7,7 @@ namespace bzsf {
 		for(sf::Uint32 i = 0; i < entities.size(); ++i) {
 			if(logFont != nullptr) entities[i].setFont(*logFont);
 			entities[i].setCharacterSize(fSize);
-			entities[i].setColor(logColor);
+			entities[i].setFillColor(logColor);
 
 			entities[i].setPosition(position + sf::Vector2f(0, i * static_cast<float>(fSize + rowOffset)));
 		}
@@ -95,8 +95,8 @@ namespace bzsf {
 					if(elapsed > 1.f) elapsed = 1.f;
 
 					sf::Color c = logColor; c.a = static_cast<sf::Uint8>(logColor.a - logColor.a * elapsed);
-					entities[u].setColor(c);
-				} else entities[u].setColor(logColor);
+					entities[u].setFillColor(c);
+				} else entities[u].setFillColor(logColor);
 			}
 
 			for(sf::Text& t : entities) {
