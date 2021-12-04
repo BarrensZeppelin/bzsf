@@ -141,6 +141,10 @@ namespace bzsf {
 		vertices.append(vertex);
 	}
 
+	sf::IntRect Emitter::getTextureRect() const {
+		assert(false);
+	}
+
 
 	Emitter::~Emitter() {
 		particles.clear();
