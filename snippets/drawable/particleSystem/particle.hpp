@@ -1,7 +1,11 @@
+#include <SFML/Graphics.hpp>
+
+#include "../animation.hpp"
 
 namespace bzsf {
 
 	class Emitter;
+	class tsTile;
 
 	class Particle {
 	public:

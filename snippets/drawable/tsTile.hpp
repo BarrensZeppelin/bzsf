@@ -1,11 +1,14 @@
+#ifndef BZSF_DRAWABLE_TSTILE
+#define BZSF_DRAWABLE_TSTILE
+
+#include <SFML/Graphics.hpp>
+
 namespace bzsf {
 	struct tsTile {
 	public:
-		int xOffset = 0;
-		int yOffset = 0;
-		int width = 0;
-		int height = 0;
-
-		const sf::Texture* texture = nullptr;
+		int xOffset, yOffset, width, height;
+		const sf::Texture* texture;
 	};
 }
+
+#endif

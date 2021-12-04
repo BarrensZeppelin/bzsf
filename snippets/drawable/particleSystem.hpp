@@ -1,3 +1,5 @@
+#ifndef BZSF_PARTICLE_SYSTEM
+#define BZSF_PARTICLE_SYSTEM
 
 #include <SFML/Graphics.hpp>
 
@@ -12,7 +14,7 @@ namespace bzsf {
 		static std::vector<std::unique_ptr<Emitter>> unownedEmitters;
 
 	private:
-		static void draw(sf::RenderTarget& window, sf::RenderStates = sf::RenderStates::Default);
+		void draw(sf::RenderTarget& window, sf::RenderStates = sf::RenderStates::Default) const;
 
 
 	public:
@@ -33,3 +35,5 @@ namespace bzsf {
 	};
 
 } //ENDOF NAMESPACE bzsf
+
+#endif

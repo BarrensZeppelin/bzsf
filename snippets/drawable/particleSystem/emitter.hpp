@@ -1,3 +1,6 @@
+#include <SFML/Graphics.hpp>
+
+#include "particle.hpp"
 
 namespace bzsf {
 

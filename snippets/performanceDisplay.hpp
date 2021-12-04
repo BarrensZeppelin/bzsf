@@ -1,9 +1,8 @@
-
+#include <SFML/Graphics.hpp>
 
 namespace bzsf {
 
-	namespace {
-		class PElement {
+	class PElement {
 		private:
 			sf::Text elementText;
 			sf::Text avgText;
@@ -20,12 +19,12 @@ namespace bzsf {
 
 		public:
 			void update();
-			
+
 			PElement(sf::Font& font, 
-				std::string elementText,
-				std::string postfix, 
-				sf::Time updateInterval, 
-				sf::Uint32 textSize);
+					std::string elementText,
+					std::string postfix,
+					sf::Time updateInterval,
+					sf::Uint32 textSize);
 
 			void pushValue(float value);
 
@@ -33,8 +32,7 @@ namespace bzsf {
 			void setColor(const sf::Color& color);
 
 			void draw(sf::RenderTarget& window, sf::Vector2f pos1, sf::Vector2f pos2, sf::RenderStates states = sf::RenderStates::Default);
-		};
-	}
+	};
 
 
 	class PerformanceDisplay : public sf::Drawable {

@@ -1,10 +1,12 @@
 #ifndef BZSF_TILESET_H
 #define BZSF_TILESET_H
 
-namespace bzsf {
+#include <SFML/Graphics.hpp>
 
-	struct tsTile;
+namespace bzsf {
 	
+	class tsTile;
+
 	class Tileset {
 	public:
 		typedef std::unique_ptr<Tileset> Ptr;

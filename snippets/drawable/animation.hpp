@@ -1,3 +1,6 @@
+#ifndef BZSF_DRAWABLE_ANIMATION
+#define BZSF_DRAWABLE_ANIMATION
+
 namespace bzsf {
 	class Drawable;
 
@@ -93,3 +96,5 @@ namespace bzsf {
 		friend Drawable;
 	};
 }
+
+#endif
