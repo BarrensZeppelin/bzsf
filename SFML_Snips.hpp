@@ -1,5 +1,3 @@
-#pragma once
-
 #ifndef BZSF
 #define BZSF
 
@@ -7,7 +5,7 @@
 
 #ifndef SFML_GRAPHICS_HPP
 
-#include <SFML\Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #endif
 
@@ -33,14 +31,14 @@
 
 // Include the Snippets:
 
-#include <bzsf\snippets\general.hpp>
-#include <bzsf\snippets\gameHandler.hpp>
-#include <bzsf\snippets\drawable.hpp>
-#include <bzsf\snippets\desaturator.hpp>
-#include <bzsf\snippets\onScreenLog.hpp>
-#include <bzsf\snippets\state.hpp>
-#include <bzsf\snippets\stateStack.hpp>
-#include <bzsf\snippets\performanceDisplay.hpp>
-#include <bzsf\snippets\quadTree.hpp>
+#include <snippets/general.hpp>
+#include <snippets/gameHandler.hpp>
+#include <snippets/drawable.hpp>
+#include <snippets/desaturator.hpp>
+#include <snippets/onScreenLog.hpp>
+#include <snippets/state.hpp>
+#include <snippets/stateStack.hpp>
+#include <snippets/performanceDisplay.hpp>
+#include <snippets/quadTree.hpp>
 
 #endif

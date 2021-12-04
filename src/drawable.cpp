@@ -1,5 +1,5 @@
 #include <SFML_Snips.hpp>
-#include <bzsf\snippets\drawable\tsTile.hpp>
+#include <bzsf/snippets/drawable/tsTile.hpp>
 
 namespace bzsf {
 	Drawable::Drawable()

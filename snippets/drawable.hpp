@@ -1,5 +1,5 @@
-#include <bzsf\snippets\drawable\animation.hpp>
-#include <bzsf\snippets\drawable\tileset.hpp>
+#include <snippets/drawable/animation.hpp>
+#include <snippets/drawable/tileset.hpp>
 
 namespace bzsf {
 
@@ -26,4 +26,4 @@ namespace bzsf {
 
 } //ENDOF NAMESPACE bzsf 
 
-#include <bzsf\snippets\drawable\particleSystem.hpp>
+#include <snippets/drawable/particleSystem.hpp>

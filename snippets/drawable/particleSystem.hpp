@@ -1,7 +1,8 @@
 
+#include <SFML/Graphics.hpp>
 
-#include "particleSystem\particle.hpp"
-#include "particleSystem\emitter.hpp"
+
+#include "particleSystem/emitter.hpp"
 
 namespace bzsf {
 

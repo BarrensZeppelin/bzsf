@@ -1,5 +1,5 @@
 #include <SFML_Snips.hpp>
-#include <bzsf\snippets\drawable\tsTile.hpp>
+#include <bzsf/snippets/drawable/tsTile.hpp>
 
 namespace bzsf {
 	Tileset::Tileset(const sf::Texture& texture, sf::Vector2u frameSize) 
